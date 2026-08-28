@@ -16,4 +16,5 @@ app = FastAPI(title="Dispo", lifespan=lifespan)
 
 @app.get("/health")
 async def health():
-    return {"status": "ok"}
+    response = await repository.check_health()
+    return {"status": response}

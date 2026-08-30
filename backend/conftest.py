@@ -9,6 +9,12 @@ load_dotenv()
 os.environ["DATABASE_URL"] = os.getenv("TEST_DATABASE_URL")
 
 from app.main import app
+from app.security import generate_hash
+
+APPROVED_EMAIL = "approved@test.com"
+REJECTED_EMAIL = "rejected@test.com"
+
+TEST_PASSWORD = "12345678"
 
 
 async def _truncate_users():
@@ -18,9 +24,53 @@ async def _truncate_users():
     await conn.close()
 
 
+async def _create_new_user(
+    name: str, password_hash: str, email: str, role: str, status: str
+):
+    conn = await asyncpg.connect(os.getenv("DATABASE_URL"))
+
+    await conn.execute(
+        "INSERT INTO users (name, password_hash, email, role, status) VALUES ($1, $2, $3, $4, $5)",
+        name,
+        password_hash,
+        email,
+        role,
+        status,
+    )
+    await conn.close()
+
+
 @pytest.fixture(autouse=True)
 def clean_db():
     asyncio.run(_truncate_users())
+
+
+@pytest.fixture
+def approved_user():
+    asyncio.run(
+        _create_new_user(
+            name="ilya",
+            password_hash=generate_hash(TEST_PASSWORD),
+            email=APPROVED_EMAIL,
+            role="driver",
+            status="approved",
+        )
+    )
+    return {"email": APPROVED_EMAIL, "password": TEST_PASSWORD}
+
+
+@pytest.fixture
+def rejected_user():
+    asyncio.run(
+        _create_new_user(
+            name="ilya",
+            password_hash=generate_hash(TEST_PASSWORD),
+            email=REJECTED_EMAIL,
+            role="driver",
+            status="rejected",
+        )
+    )
+    return {"email": REJECTED_EMAIL, "password": TEST_PASSWORD}
 
 
 @pytest.fixture

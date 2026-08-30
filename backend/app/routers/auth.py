@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 import app.services.auth_service as auth_service
-from app.schemas.users_schemas import UserRegistration, UserOut
+from app.schemas.users_schemas import UserRegistration, UserOut, UserLogin, LoginOut
 
 auth_router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -10,5 +10,12 @@ async def register(user: UserRegistration):
     response = await auth_service.register(
         name=user.name, password=user.password, role=user.role, email=user.email.lower()
     )
+
+    return response
+
+
+@auth_router.post("/login", status_code=200, response_model=LoginOut)
+async def login(user: UserLogin):
+    response = await auth_service.login(user.email, user.password)
 
     return response

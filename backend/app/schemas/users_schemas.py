@@ -15,3 +15,14 @@ class UserOut(BaseModel):
     email: str
     role: str
     status: Literal["pending", "approved", "rejected"]
+
+
+class UserLogin(BaseModel):
+    email: EmailStr = Field(max_length=254)
+    password: str = Field(min_length=8)
+
+
+class LoginOut(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: UserOut

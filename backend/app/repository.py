@@ -2,6 +2,7 @@ import asyncpg
 import os
 from dotenv import load_dotenv
 from typing import Any
+from fastapi import HTTPException
 
 load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -31,3 +32,15 @@ async def add_new_user_to_db(
     )
 
     return dict(record)
+
+
+async def get_user_by_email(item: str) -> dict[str, Any]:
+    response = await pool.fetchrow(
+        "SELECT id, status, name, email, password_hash, role FROM users WHERE email = $1",
+        item,
+    )
+
+    if response is None:
+        return None
+
+    return dict(response)

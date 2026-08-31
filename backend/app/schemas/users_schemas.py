@@ -19,7 +19,7 @@ class UserOut(BaseModel):
 
 class UserLogin(BaseModel):
     email: EmailStr = Field(max_length=254)
-    password: str = Field(min_length=8)
+    password: str
 
 
 class LoginOut(BaseModel):

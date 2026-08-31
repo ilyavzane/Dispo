@@ -4,12 +4,12 @@ import asyncio
 import asyncpg
 import pytest
 from fastapi.testclient import TestClient
+from app.main import app
+from app.security import generate_hash
 
 load_dotenv()
 os.environ["DATABASE_URL"] = os.getenv("TEST_DATABASE_URL")
 
-from app.main import app
-from app.security import generate_hash
 
 APPROVED_EMAIL = "approved@test.com"
 REJECTED_EMAIL = "rejected@test.com"

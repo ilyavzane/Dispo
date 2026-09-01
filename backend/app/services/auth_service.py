@@ -9,7 +9,7 @@ async def register(name: str, password: str, email: str, role: str) -> dict[str,
     hashed_password = generate_hash(password)
 
     try:
-        response = await repository.add_new_user_to_db(
+        response = await repository.add_new_user(
             name=name, password_hash=hashed_password, email=email, role=role
         )
     except UniqueViolationError:

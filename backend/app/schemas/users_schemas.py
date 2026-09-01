@@ -26,3 +26,6 @@ class LoginOut(BaseModel):
     access_token: str
     token_type: str = "bearer"
     user: UserOut
+
+class UserStatusUpdate(BaseModel):
+    new_status: Literal["approved", "rejected"]

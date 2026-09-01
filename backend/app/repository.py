@@ -19,7 +19,10 @@ async def check_health():
     return response
 
 
-async def add_new_user_to_db(
+# REGISTRATION & LOGIN
+
+
+async def add_new_user(
     name: str, password_hash: str, email: str, role: str
 ) -> dict[str, Any]:
     record = await pool.fetchrow(
@@ -43,3 +46,35 @@ async def get_user_by_email(email: str) -> dict[str, Any] | None:
         return None
 
     return dict(response)
+
+
+# ADMIN PANEL
+async def get_users(status: str) -> list[dict]:
+    rows = await pool.fetch(
+        "SELECT id, name, email, role, status, created_at FROM users WHERE status = $1",
+        status,
+    )
+
+    return [dict(row) for row in rows]
+
+
+async def update_user_status(user_id: int, new_status: str) -> dict[str, Any] | None:
+    record = await pool.fetchrow(
+        "UPDATE users SET status = $1 WHERE id = $2 RETURNING id, name, email, role, status, created_at",
+        new_status,
+        user_id,
+    )
+
+    if record is None:
+        return None
+
+    return dict(record)
+
+
+# DEPENDECY
+
+
+async def get_user_role(user_id: int):
+    role = await pool.fetchval("SELECT role FROM users WHERE id = $1", user_id)
+
+    return role

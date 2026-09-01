@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 import app.repository as repository
 
 from app.routers.auth import auth_router
+from app.routers.admin import admin_router
 
 
 @asynccontextmanager
@@ -16,6 +17,7 @@ app = FastAPI(title="Dispo", lifespan=lifespan)
 
 
 app.include_router(auth_router)
+app.include_router(admin_router)
 
 
 @app.get("/health")

@@ -33,3 +33,7 @@ def create_jwt_token(user_id: int):
     )
 
     return token
+
+
+def decode_jwt_token(token):
+    return int(jwt.decode(token, SECRET, algorithms=[ALGORITHM])["sub"])

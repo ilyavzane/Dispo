@@ -87,7 +87,7 @@ def admin_user():
             status="approved",
         )
     )
-    return {"email": APPROVED_EMAIL, "password": TEST_PASSWORD, "user_id": user_id}
+    return {"email": ADMIN_EMAIL, "password": TEST_PASSWORD, "user_id": user_id}
 
 
 @pytest.fixture

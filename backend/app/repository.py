@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 from typing import Any
 
 load_dotenv()
-
 pool = None
 
 
@@ -51,7 +50,7 @@ async def get_user_by_email(email: str) -> dict[str, Any] | None:
 # ADMIN PANEL
 async def get_users(status: str) -> list[dict]:
     rows = await pool.fetch(
-        "SELECT id, name, email, role, status, created_at FROM users WHERE status = $1",
+        "SELECT id, name, email, role, status, created_at FROM users WHERE status = $1 ORDER BY id",
         status,
     )
 
@@ -74,7 +73,12 @@ async def update_user_status(user_id: int, new_status: str) -> dict[str, Any] | 
 # DEPENDECY
 
 
-async def get_user_role(user_id: int):
-    role = await pool.fetchval("SELECT role FROM users WHERE id = $1", user_id)
+async def get_user_by_id(user_id: int) -> dict[str, Any] | None:
+    user_data = await pool.fetchrow(
+        "SELECT id, name, email, role, status FROM users WHERE id = $1", user_id
+    )
 
-    return role
+    if user_data is None:
+        return None
+
+    return dict(user_data)

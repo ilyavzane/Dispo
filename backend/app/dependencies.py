@@ -1,7 +1,7 @@
 from fastapi.security import HTTPBearer
 from fastapi import Depends
 from app.security import decode_jwt_token
-from app.repository import get_user_role
+from app.repository import get_user_by_id
 from fastapi import HTTPException
 import jwt
 
@@ -19,5 +19,13 @@ async def require_admin(token=Depends(bearer_scheme)):
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-    if await get_user_role(user_id) != "admin":
+    user_data = await get_user_by_id(user_id)
+
+    if user_data is None:
+        raise HTTPException(status_code=401, detail="User not found")
+
+    user_role = user_data["role"]
+    user_status = user_data["status"]
+
+    if user_role != "admin" or user_status != "approved":
         raise HTTPException(status_code=403, detail="You don't have rights")

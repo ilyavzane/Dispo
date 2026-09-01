@@ -1,10 +1,12 @@
 from fastapi import APIRouter, Depends
-from app.dependencies import require_admin
+from app.dependencies import require_role
 from app.services import admin_service
 from typing import Literal
 from app.schemas.users_schemas import UserOut, UserStatusUpdate
 
-admin_router = APIRouter(tags=["Admin"], dependencies=[Depends(require_admin)])
+admin_router = APIRouter(
+    tags=["Admin"], dependencies=[Depends(require_role(role="dispatcher"))]
+)
 
 
 @admin_router.get("/users", response_model=list[UserOut])

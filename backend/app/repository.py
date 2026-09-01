@@ -2,11 +2,14 @@ import asyncpg
 import os
 from dotenv import load_dotenv
 from typing import Any
+from decimal import Decimal
+from datetime import datetime
 
 load_dotenv()
 pool = None
 
 
+# POOL
 async def create_pool():
     global pool
     DATABASE_URL = os.getenv("DATABASE_URL")
@@ -19,8 +22,6 @@ async def check_health():
 
 
 # REGISTRATION & LOGIN
-
-
 async def add_new_user(
     name: str, password_hash: str, email: str, role: str
 ) -> dict[str, Any]:
@@ -70,9 +71,62 @@ async def update_user_status(user_id: int, new_status: str) -> dict[str, Any] | 
     return dict(record)
 
 
-# DEPENDECY
+# DISPATCHER
+async def create_load(
+    origin: str,
+    destination: str,
+    pickup_date: datetime,
+    weight: Decimal,
+    rate: Decimal,
+    created_by: int,
+) -> dict[str, Any]:
+    new_load = await pool.fetchrow(
+        """INSERT INTO loads (origin, destination, pickup_date, weight, rate, created_by)
+         VALUES ($1, $2, $3, $4, $5, $6)
+         RETURNING id, origin, destination, pickup_date, weight, status, assigned_driver_id ,rate, created_by, created_at""",
+        origin,
+        destination,
+        pickup_date,
+        weight,
+        rate,
+        created_by,
+    )
+
+    return dict(new_load)
 
 
+async def get_loads(status: str | None = None) -> list[dict]:
+    loads = await pool.fetch(
+        """SELECT id, origin, destination, pickup_date, weight, status, assigned_driver_id ,rate, created_by, created_at 
+        FROM loads WHERE $1::text IS NULL OR status = $1
+        ORDER BY pickup_date ASC""",
+        status,
+    )
+
+    return [dict(load) for load in loads]
+
+
+async def edit_load(load_id: int, loads_update) -> dict[str, Any] | None:
+    set_clause = ", ".join(
+        f"{column} = ${i}" for i, column in enumerate(loads_update, start=1)
+    )
+
+    values = list(loads_update.values())
+
+    edited_load = await pool.fetchrow(
+        f"""UPDATE loads SET {set_clause} WHERE id = ${len(values) + 1} 
+        RETURNING id, origin, destination, pickup_date, weight, status, assigned_driver_id ,rate, created_by, created_at""",
+        *values,
+        load_id,
+    )
+
+    if edited_load is None:
+        return None
+
+    return dict(edited_load)
+
+
+# DEPENDENCY
 async def get_user_by_id(user_id: int) -> dict[str, Any] | None:
     user_data = await pool.fetchrow(
         "SELECT id, name, email, role, status FROM users WHERE id = $1", user_id

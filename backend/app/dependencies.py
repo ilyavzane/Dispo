@@ -8,24 +8,30 @@ import jwt
 bearer_scheme = HTTPBearer(auto_error=False)
 
 
-async def require_admin(token=Depends(bearer_scheme)):
-    try:
-        if token is None:
-            raise HTTPException(status_code=401, detail="No token provided")
+def require_role(role: str):
 
-        user_id = decode_jwt_token(token.credentials)
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Expired jwt token")
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+    async def check(token=Depends(bearer_scheme)):
+        try:
+            if token is None:
+                raise HTTPException(status_code=401, detail="No token provided")
 
-    user_data = await get_user_by_id(user_id)
+            user_id = decode_jwt_token(token.credentials)
+        except jwt.ExpiredSignatureError:
+            raise HTTPException(status_code=401, detail="Expired jwt token")
+        except jwt.InvalidTokenError:
+            raise HTTPException(status_code=401, detail="Invalid token")
 
-    if user_data is None:
-        raise HTTPException(status_code=401, detail="User not found")
+        user_data = await get_user_by_id(user_id)
 
-    user_role = user_data["role"]
-    user_status = user_data["status"]
+        if user_data is None:
+            raise HTTPException(status_code=401, detail="User not found")
 
-    if user_role != "admin" or user_status != "approved":
-        raise HTTPException(status_code=403, detail="You don't have rights")
+        user_role = user_data["role"]
+        user_status = user_data["status"]
+
+        if user_role not in [role, "admin"] or user_status != "approved":
+            raise HTTPException(status_code=403, detail="You don't have rights")
+
+        return user_data["id"]
+
+    return check

@@ -13,6 +13,7 @@ os.environ["DATABASE_URL"] = os.getenv("TEST_DATABASE_URL")
 
 APPROVED_EMAIL = "approved@test.com"
 REJECTED_EMAIL = "rejected@test.com"
+ADMIN_EMAIL = "admin@test.com"
 
 TEST_PASSWORD = "12345678"
 
@@ -29,8 +30,8 @@ async def _create_new_user(
 ):
     conn = await asyncpg.connect(os.getenv("DATABASE_URL"))
 
-    await conn.execute(
-        "INSERT INTO users (name, password_hash, email, role, status) VALUES ($1, $2, $3, $4, $5)",
+    user_id = await conn.fetchval(
+        "INSERT INTO users (name, password_hash, email, role, status) VALUES ($1, $2, $3, $4, $5) RETURNING id",
         name,
         password_hash,
         email,
@@ -38,6 +39,8 @@ async def _create_new_user(
         status,
     )
     await conn.close()
+
+    return user_id
 
 
 @pytest.fixture(autouse=True)
@@ -47,7 +50,7 @@ def clean_db():
 
 @pytest.fixture
 def approved_user():
-    asyncio.run(
+    user_id = asyncio.run(
         _create_new_user(
             name="ilya",
             password_hash=generate_hash(TEST_PASSWORD),
@@ -56,12 +59,12 @@ def approved_user():
             status="approved",
         )
     )
-    return {"email": APPROVED_EMAIL, "password": TEST_PASSWORD}
+    return {"email": APPROVED_EMAIL, "password": TEST_PASSWORD, "user_id": user_id}
 
 
 @pytest.fixture
 def rejected_user():
-    asyncio.run(
+    user_id = asyncio.run(
         _create_new_user(
             name="ilya",
             password_hash=generate_hash(TEST_PASSWORD),
@@ -70,7 +73,21 @@ def rejected_user():
             status="rejected",
         )
     )
-    return {"email": REJECTED_EMAIL, "password": TEST_PASSWORD}
+    return {"email": REJECTED_EMAIL, "password": TEST_PASSWORD, "user_id": user_id}
+
+
+@pytest.fixture
+def admin_user():
+    user_id = asyncio.run(
+        _create_new_user(
+            name="admin_test",
+            password_hash=generate_hash(TEST_PASSWORD),
+            email=ADMIN_EMAIL,
+            role="admin",
+            status="approved",
+        )
+    )
+    return {"email": APPROVED_EMAIL, "password": TEST_PASSWORD, "user_id": user_id}
 
 
 @pytest.fixture

@@ -13,6 +13,7 @@ os.environ["DATABASE_URL"] = os.getenv("TEST_DATABASE_URL")
 
 
 APPROVED_EMAIL = "approved@test.com"
+SECOND_DRIVER_EMAIL = "seconddriver@test.com"
 REJECTED_EMAIL = "rejected@test.com"
 ADMIN_EMAIL = "admin@test.com"
 DISPATCHER_EMAIL = "dispatcher@test.com"
@@ -62,6 +63,20 @@ def approved_user():
         )
     )
     return {"email": APPROVED_EMAIL, "password": TEST_PASSWORD, "user_id": user_id}
+
+
+@pytest.fixture
+def second_driver():
+    user_id = asyncio.run(
+        _create_new_user(
+            name="ilya",
+            password_hash=generate_hash(TEST_PASSWORD),
+            email=SECOND_DRIVER_EMAIL,
+            role="driver",
+            status="approved",
+        )
+    )
+    return {"email": SECOND_DRIVER_EMAIL, "password": TEST_PASSWORD, "user_id": user_id}
 
 
 @pytest.fixture

@@ -1,8 +1,9 @@
-import app.repository as repository
-from app.security import generate_hash, check_password, create_jwt_token
+from typing import Any
+
+from app import repository
+from app.security import check_password, create_jwt_token, generate_hash
 from asyncpg import UniqueViolationError
 from fastapi import HTTPException
-from typing import Any
 
 
 async def register(name: str, password: str, email: str, role: str) -> dict[str, Any]:

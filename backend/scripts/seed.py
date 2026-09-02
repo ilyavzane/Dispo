@@ -1,10 +1,10 @@
-import os
-from dotenv import load_dotenv
-from app.security import generate_hash
-import asyncpg
 import asyncio
+import os
 
+import asyncpg
+from app.security import generate_hash
 from asyncpg import UniqueViolationError
+from dotenv import load_dotenv
 
 load_dotenv()
 

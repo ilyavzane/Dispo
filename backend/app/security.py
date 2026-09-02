@@ -1,8 +1,9 @@
+import os
+from datetime import datetime, timedelta, timezone
+
 import bcrypt
 import jwt
-import os
 from dotenv import load_dotenv
-from datetime import timezone, timedelta, datetime
 
 load_dotenv()
 SECRET = os.getenv("JWT_SECRET")

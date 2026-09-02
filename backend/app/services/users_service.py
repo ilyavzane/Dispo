@@ -1,4 +1,4 @@
-import app.repository as repository
+from app import repository
 from fastapi import HTTPException
 
 
@@ -15,3 +15,9 @@ async def update_user_status(user_id: int, new_status: str):
         raise HTTPException(status_code=404, detail="User not found")
 
     return new_user_data
+
+
+async def get_drivers(available: bool | None = None):
+    drivers = await repository.get_drivers(available)
+
+    return drivers

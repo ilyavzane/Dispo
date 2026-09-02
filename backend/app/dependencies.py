@@ -1,15 +1,14 @@
-from fastapi.security import HTTPBearer
-from fastapi import Depends
-from app.security import decode_jwt_token
-from app.repository import get_user_by_id
-from fastapi import HTTPException
 import jwt
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPBearer
+
+from app.repository import get_user_by_id
+from app.security import decode_jwt_token
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
 
-def require_role(role: str):
-
+def require_role(*roles):
     async def check(token=Depends(bearer_scheme)):
         try:
             if token is None:
@@ -29,9 +28,9 @@ def require_role(role: str):
         user_role = user_data["role"]
         user_status = user_data["status"]
 
-        if user_role not in [role, "admin"] or user_status != "approved":
+        if user_role not in [*roles, "admin"] or user_status != "approved":
             raise HTTPException(status_code=403, detail="You don't have rights")
 
-        return user_data["id"]
+        return user_data
 
     return check

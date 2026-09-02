@@ -1,6 +1,8 @@
-from pydantic import BaseModel, AwareDatetime, Field
-from decimal import Decimal
 from datetime import datetime
+from decimal import Decimal
+from typing import Literal
+
+from pydantic import AwareDatetime, BaseModel, Field
 
 
 class LoadCreate(BaseModel):
@@ -22,6 +24,7 @@ class LoadOut(BaseModel):
     status: str
     created_at: datetime
     created_by: int
+    assigned_by: int | None = None
 
 
 class LoadUpdate(BaseModel):
@@ -30,3 +33,7 @@ class LoadUpdate(BaseModel):
     pickup_date: AwareDatetime | None = None
     weight: Decimal | None = None
     rate: Decimal | None = None
+
+
+class UpdateStatus(BaseModel):
+    new_status: Literal["in_transit", "delivered"]

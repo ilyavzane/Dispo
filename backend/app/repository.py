@@ -1,9 +1,10 @@
-import asyncpg
 import os
-from dotenv import load_dotenv
-from typing import Any
-from decimal import Decimal
 from datetime import datetime
+from decimal import Decimal
+from typing import Any
+
+import asyncpg
+from dotenv import load_dotenv
 
 load_dotenv()
 pool = None
@@ -48,7 +49,7 @@ async def get_user_by_email(email: str) -> dict[str, Any] | None:
     return dict(response)
 
 
-# ADMIN PANEL
+# USERS
 async def get_users(status: str) -> list[dict]:
     rows = await pool.fetch(
         "SELECT id, name, email, role, status, created_at FROM users WHERE status = $1 ORDER BY id",
@@ -71,7 +72,21 @@ async def update_user_status(user_id: int, new_status: str) -> dict[str, Any] | 
     return dict(record)
 
 
-# DISPATCHER
+async def get_drivers(available: bool | None = None) -> list[dict]:
+
+    query = "SELECT id, name, email, role, status, created_at FROM users WHERE role = 'driver' AND status = 'approved'"
+
+    if available is True:
+        query += " AND NOT EXISTS (SELECT 1 FROM loads WHERE assigned_driver_id = users.id AND loads.status IN ('in_transit', 'assigned'))"
+    elif available is False:
+        query += " AND EXISTS (SELECT 1 FROM loads WHERE assigned_driver_id = users.id AND loads.status IN ('in_transit', 'assigned'))"
+
+    drivers = await pool.fetch(query)
+
+    return [dict(driver) for driver in drivers]
+
+
+# LOADS
 async def create_load(
     origin: str,
     destination: str,
@@ -95,15 +110,31 @@ async def create_load(
     return dict(new_load)
 
 
-async def get_loads(status: str | None = None) -> list[dict]:
+async def get_loads(
+    status: str | None = None, driver_id: int | None = None
+) -> list[dict]:
     loads = await pool.fetch(
-        """SELECT id, origin, destination, pickup_date, weight, status, assigned_driver_id ,rate, created_by, created_at 
-        FROM loads WHERE $1::text IS NULL OR status = $1
+        """SELECT id, origin, destination, pickup_date, weight, status, assigned_driver_id ,rate, created_by, created_at, assigned_by
+        FROM loads WHERE ($1::text IS NULL OR status = $1) AND ($2::BIGINT IS NULL OR assigned_driver_id = $2)
         ORDER BY pickup_date ASC""",
         status,
+        driver_id,
     )
 
     return [dict(load) for load in loads]
+
+
+async def get_load_by_id(load_id: int) -> dict[str, Any] | None:
+    load = await pool.fetchrow(
+        """SELECT id, origin, destination, pickup_date, weight, status, assigned_driver_id ,rate, created_by, created_at, assigned_by
+        FROM loads WHERE id = $1""",
+        load_id,
+    )
+
+    if load is None:
+        return None
+
+    return dict(load)
 
 
 async def edit_load(load_id: int, loads_update) -> dict[str, Any] | None:
@@ -124,6 +155,38 @@ async def edit_load(load_id: int, loads_update) -> dict[str, Any] | None:
         return None
 
     return dict(edited_load)
+
+
+async def assign_driver(
+    driver_id: int, assigned_by: int, load_id: int
+) -> dict[str, Any] | None:
+    updated_load = await pool.fetchrow(
+        """UPDATE loads
+      SET assigned_driver_id = $1, assigned_by = $2, status = 'assigned' WHERE id = $3
+      RETURNING id, origin, destination, pickup_date, weight, status, assigned_driver_id ,rate, created_by, created_at, assigned_by""",
+        driver_id,
+        assigned_by,
+        load_id,
+    )
+
+    if updated_load is None:
+        return None
+
+    return dict(updated_load)
+
+
+async def update_load_status(load_id: int, new_status: str) -> dict[str, Any] | None:
+    updated_load = await pool.fetchrow(
+        """UPDATE loads SET status = $1 WHERE id = $2
+          RETURNING id, origin, destination, pickup_date, weight, status, assigned_driver_id ,rate, created_by, created_at, assigned_by""",
+        new_status,
+        load_id,
+    )
+
+    if updated_load is None:
+        return None
+
+    return dict(updated_load)
 
 
 # DEPENDENCY

@@ -1,11 +1,12 @@
-import os
-from dotenv import load_dotenv
 import asyncio
+import os
+
 import asyncpg
 import pytest
-from fastapi.testclient import TestClient
 from app.main import app
 from app.security import generate_hash
+from dotenv import load_dotenv
+from fastapi.testclient import TestClient
 
 load_dotenv()
 os.environ["DATABASE_URL"] = os.getenv("TEST_DATABASE_URL")
@@ -14,6 +15,7 @@ os.environ["DATABASE_URL"] = os.getenv("TEST_DATABASE_URL")
 APPROVED_EMAIL = "approved@test.com"
 REJECTED_EMAIL = "rejected@test.com"
 ADMIN_EMAIL = "admin@test.com"
+DISPATCHER_EMAIL = "dispatcher@test.com"
 
 TEST_PASSWORD = "12345678"
 
@@ -74,6 +76,20 @@ def rejected_user():
         )
     )
     return {"email": REJECTED_EMAIL, "password": TEST_PASSWORD, "user_id": user_id}
+
+
+@pytest.fixture
+def dispatcher_user():
+    user_id = asyncio.run(
+        _create_new_user(
+            name="dispatcher",
+            password_hash=generate_hash(TEST_PASSWORD),
+            email=DISPATCHER_EMAIL,
+            role="dispatcher",
+            status="approved",
+        )
+    )
+    return {"email": DISPATCHER_EMAIL, "password": TEST_PASSWORD, "user_id": user_id}
 
 
 @pytest.fixture

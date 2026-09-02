@@ -1,5 +1,5 @@
-from app.security import create_jwt_token
 import pytest
+from app.security import create_jwt_token
 
 
 def test_admin_get_user_listing(client, admin_user):

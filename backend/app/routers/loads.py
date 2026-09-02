@@ -1,0 +1,75 @@
+from typing import Literal
+
+from app.dependencies import require_role
+from app.schemas.loads_schemas import LoadCreate, LoadOut, LoadUpdate, UpdateStatus
+from app.services import loads_service
+from fastapi import APIRouter, Body, Depends
+
+loads_router = APIRouter(tags=["Loads"])
+
+
+@loads_router.post("/loads", status_code=201, response_model=LoadOut)
+async def create_load(load: LoadCreate, user=Depends(require_role("dispatcher"))):
+    response = await loads_service.create_load(
+        origin=load.origin,
+        destination=load.destination,
+        pickup_date=load.pickup_date,
+        rate=load.rate,
+        weight=load.weight,
+        created_by=user["id"],
+    )
+
+    return response
+
+
+@loads_router.get(
+    "/loads",
+    status_code=200,
+    response_model=list[LoadOut],
+)
+async def get_loads(
+    status: Literal["new", "in_transit", "delivered", "assigned"] | None = None,
+    user=Depends(require_role("dispatcher", "driver")),
+):
+    response = await loads_service.get_loads(user, status)
+
+    return response
+
+
+@loads_router.patch(
+    "/loads/{load_id}",
+    status_code=200,
+    response_model=LoadOut,
+    dependencies=[Depends(require_role("dispatcher"))],
+)
+async def edit_loads(load_id: int, loads_update: LoadUpdate):
+
+    response = await loads_service.edit_loads(
+        load_id, loads_update.model_dump(exclude_unset=True)
+    )
+
+    return response
+
+
+@loads_router.patch("/loads/{load_id}/assign", status_code=200, response_model=LoadOut)
+async def assign_driver(
+    load_id: int,
+    driver_id: int = Body(embed=True),
+    user=Depends(require_role("dispatcher")),
+):
+    response = await loads_service.assign_driver(
+        driver_id=driver_id, assigned_by=user["id"], load_id=load_id
+    )
+
+    return response
+
+
+@loads_router.patch("/loads/{load_id}/status", status_code=200, response_model=LoadOut)
+async def update_load_status(
+    new_status: UpdateStatus, load_id: int, user=Depends(require_role("driver"))
+):
+    response = await loads_service.update_load_status(
+        driver_id=user["id"], load_id=load_id, new_status=new_status.new_status
+    )
+
+    return response

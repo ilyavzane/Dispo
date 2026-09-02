@@ -7,5 +7,6 @@ assigned_driver_id BIGINT REFERENCES users(id),
 rate numeric(8, 2) NOT NULL,
 status TEXT NOT NULL DEFAULT 'new' CHECK(status IN ('new', 'assigned', 'in_transit', 'delivered')),
 created_by BIGINT NOT NULL REFERENCES users(id),
-created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+assigned_by BIGINT REFERENCES users(id) 
 );

@@ -1,15 +1,17 @@
 from typing import Literal
 
+from fastapi import APIRouter, Body, Depends
+
 from app.dependencies import require_role
+from app.enums import LoadStatus, Roles
 from app.schemas.loads_schemas import LoadCreate, LoadOut, LoadUpdate, UpdateStatus
 from app.services import loads_service
-from fastapi import APIRouter, Body, Depends
 
 loads_router = APIRouter(tags=["Loads"])
 
 
 @loads_router.post("/loads", status_code=201, response_model=LoadOut)
-async def create_load(load: LoadCreate, user=Depends(require_role("dispatcher"))):
+async def create_load(load: LoadCreate, user=Depends(require_role(Roles.DISPATCHER))):
     response = await loads_service.create_load(
         origin=load.origin,
         destination=load.destination,
@@ -28,8 +30,8 @@ async def create_load(load: LoadCreate, user=Depends(require_role("dispatcher"))
     response_model=list[LoadOut],
 )
 async def get_loads(
-    status: Literal["new", "in_transit", "delivered", "assigned"] | None = None,
-    user=Depends(require_role("dispatcher", "driver")),
+    status: LoadStatus | None = None,
+    user=Depends(require_role(Roles.DISPATCHER, Roles.DRIVER)),
 ):
     response = await loads_service.get_loads(user, status)
 
@@ -40,12 +42,12 @@ async def get_loads(
     "/loads/{load_id}",
     status_code=200,
     response_model=LoadOut,
-    dependencies=[Depends(require_role("dispatcher"))],
+    dependencies=[Depends(require_role(Roles.DISPATCHER))],
 )
 async def edit_loads(load_id: int, loads_update: LoadUpdate):
 
-    response = await loads_service.edit_loads(
-        load_id, loads_update.model_dump(exclude_unset=True)
+    response = await loads_service.edit_load(
+        load_id, loads_update.model_dump(exclude_unset=True, exclude_none=True)
     )
 
     return response
@@ -55,7 +57,7 @@ async def edit_loads(load_id: int, loads_update: LoadUpdate):
 async def assign_driver(
     load_id: int,
     driver_id: int = Body(embed=True),
-    user=Depends(require_role("dispatcher")),
+    user=Depends(require_role(Roles.DISPATCHER)),
 ):
     response = await loads_service.assign_driver(
         driver_id=driver_id, assigned_by=user["id"], load_id=load_id
@@ -66,10 +68,10 @@ async def assign_driver(
 
 @loads_router.patch("/loads/{load_id}/status", status_code=200, response_model=LoadOut)
 async def update_load_status(
-    new_status: UpdateStatus, load_id: int, user=Depends(require_role("driver"))
+    new_status: UpdateStatus, load_id: int, user=Depends(require_role(Roles.DRIVER))
 ):
     response = await loads_service.update_load_status(
-        driver_id=user["id"], load_id=load_id, new_status=new_status.new_status
+        user=user, load_id=load_id, new_status=new_status.new_status
     )
 
     return response

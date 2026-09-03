@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 SECRET = os.getenv("JWT_SECRET")
 ALGORITHM = os.getenv("JWT_ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 60))
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
 
 
 # generating password hash that will be saved in database
@@ -37,4 +37,7 @@ def create_jwt_token(user_id: int):
 
 
 def decode_jwt_token(token):
-    return int(jwt.decode(token, SECRET, algorithms=[ALGORITHM])["sub"])
+    try:
+        return int(jwt.decode(token, SECRET, algorithms=[ALGORITHM])["sub"])
+    except (ValueError, KeyError):
+        raise jwt.InvalidTokenError from None

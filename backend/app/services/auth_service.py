@@ -1,9 +1,11 @@
 from typing import Any
 
-from app import repository
-from app.security import check_password, create_jwt_token, generate_hash
 from asyncpg import UniqueViolationError
 from fastapi import HTTPException
+
+from app import repository
+from app.enums import Statuses
+from app.security import check_password, create_jwt_token, generate_hash
 
 
 async def register(name: str, password: str, email: str, role: str) -> dict[str, Any]:
@@ -14,7 +16,9 @@ async def register(name: str, password: str, email: str, role: str) -> dict[str,
             name=name, password_hash=hashed_password, email=email, role=role
         )
     except UniqueViolationError:
-        raise HTTPException(status_code=409, detail="Email already registered")
+        raise HTTPException(
+            status_code=409, detail="Email already registered"
+        ) from None
 
     return response
 
@@ -31,10 +35,10 @@ async def login(email: str, password: str) -> dict[str, Any]:
     ):
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
-    if user_data["status"] == "pending":
+    if user_data["status"] == Statuses.PENDING:
         raise HTTPException(status_code=403, detail="Account is pending approval")
 
-    if user_data["status"] == "rejected":
+    if user_data["status"] == Statuses.REJECTED:
         raise HTTPException(status_code=403, detail="Account is rejected")
 
     token = create_jwt_token(user_data["id"])

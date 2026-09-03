@@ -1,5 +1,6 @@
-from app import repository
 from fastapi import HTTPException
+
+from app import repository
 
 
 async def get_users(status: str):

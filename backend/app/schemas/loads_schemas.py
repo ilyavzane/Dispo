@@ -4,6 +4,8 @@ from typing import Literal
 
 from pydantic import AwareDatetime, BaseModel, Field
 
+from app.enums import LoadStatus
+
 
 class LoadCreate(BaseModel):
     origin: str = Field(min_length=1)
@@ -21,19 +23,19 @@ class LoadOut(BaseModel):
     weight: Decimal
     rate: Decimal
     assigned_driver_id: int | None = None
-    status: str
+    status: LoadStatus
     created_at: datetime
     created_by: int
     assigned_by: int | None = None
 
 
 class LoadUpdate(BaseModel):
-    origin: str | None = None
-    destination: str | None = None
+    origin: str | None = Field(default=None, min_length=1)
+    destination: str | None = Field(default=None, min_length=1)
     pickup_date: AwareDatetime | None = None
-    weight: Decimal | None = None
-    rate: Decimal | None = None
+    weight: Decimal | None = Field(default=None, max_digits=8, decimal_places=2, gt=0)
+    rate: Decimal | None = Field(default=None, max_digits=8, decimal_places=2, gt=0)
 
 
 class UpdateStatus(BaseModel):
-    new_status: Literal["in_transit", "delivered"]
+    new_status: Literal[LoadStatus.IN_TRANSIT, LoadStatus.DELIVERED]

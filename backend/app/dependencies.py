@@ -2,6 +2,7 @@ import jwt
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer
 
+from app.enums import Roles, Statuses
 from app.repository import get_user_by_id
 from app.security import decode_jwt_token
 
@@ -16,9 +17,9 @@ def require_role(*roles):
 
             user_id = decode_jwt_token(token.credentials)
         except jwt.ExpiredSignatureError:
-            raise HTTPException(status_code=401, detail="Expired jwt token")
+            raise HTTPException(status_code=401, detail="Expired jwt token") from None
         except jwt.InvalidTokenError:
-            raise HTTPException(status_code=401, detail="Invalid token")
+            raise HTTPException(status_code=401, detail="Invalid token") from None
 
         user_data = await get_user_by_id(user_id)
 
@@ -28,7 +29,7 @@ def require_role(*roles):
         user_role = user_data["role"]
         user_status = user_data["status"]
 
-        if user_role not in [*roles, "admin"] or user_status != "approved":
+        if user_role not in [*roles, Roles.ADMIN] or user_status != Statuses.APPROVED:
             raise HTTPException(status_code=403, detail="You don't have rights")
 
         return user_data

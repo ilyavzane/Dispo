@@ -1,8 +1,10 @@
 from decimal import Decimal
 from typing import Any
 
-from app import repository
 from fastapi import HTTPException
+
+from app import repository
+from app.enums import LoadStatus, Roles, Statuses
 
 
 async def create_load(
@@ -23,7 +25,7 @@ async def create_load(
 
 async def get_loads(user: dict, status: str | None = None):
 
-    if user["role"] == "driver":
+    if user["role"] == Roles.DRIVER:
         driver_id = user["id"]
     else:
         driver_id = None
@@ -33,10 +35,16 @@ async def get_loads(user: dict, status: str | None = None):
     return loads
 
 
-async def edit_loads(load_id: int, loads_update: dict) -> dict[str, Any]:
+ALLOWED_UPDATE_COLUMNS = {"origin", "destination", "pickup_date", "weight", "rate"}
+
+
+async def edit_load(load_id: int, loads_update: dict) -> dict[str, Any]:
 
     if not loads_update:
         raise HTTPException(status_code=400, detail="No updates were sent")
+
+    if set(loads_update) - ALLOWED_UPDATE_COLUMNS:
+        raise ValueError("Unknown column")
 
     edited_load = await repository.edit_load(load_id, loads_update)
 
@@ -52,8 +60,10 @@ async def assign_driver(driver_id: int, assigned_by: int, load_id: int):
 
     if driver is None:
         raise HTTPException(status_code=404, detail="Driver not found")
-    elif driver["role"] != "driver":
+    elif driver["role"] != Roles.DRIVER:
         raise HTTPException(status_code=400, detail="User with this id is not driver")
+    elif driver["status"] != Statuses.APPROVED:
+        raise HTTPException(status_code=400, detail="Driver is not approved")
 
     updated_load = await repository.assign_driver(driver_id, assigned_by, load_id)
 
@@ -63,16 +73,19 @@ async def assign_driver(driver_id: int, assigned_by: int, load_id: int):
     return updated_load
 
 
-async def update_load_status(driver_id: int, load_id: int, new_status: str):
+async def update_load_status(user: dict, load_id: int, new_status: str):
 
-    allowed_transit = {"assigned": "in_transit", "in_transit": "delivered"}
+    allowed_transit = {
+        LoadStatus.ASSIGNED: LoadStatus.IN_TRANSIT,
+        LoadStatus.IN_TRANSIT: LoadStatus.DELIVERED,
+    }
 
     load = await repository.get_load_by_id(load_id)
 
     if load is None:
         raise HTTPException(status_code=404, detail="Load not found")
 
-    if driver_id != load["assigned_driver_id"]:
+    if user["id"] != load["assigned_driver_id"] and user["role"] != Roles.ADMIN:
         raise HTTPException(status_code=403, detail="This load is not assigned to you")
 
     if new_status != allowed_transit.get(load["status"]):

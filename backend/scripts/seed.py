@@ -1,22 +1,16 @@
 import asyncio
-import os
 
 import asyncpg
 from asyncpg import UniqueViolationError
-from dotenv import load_dotenv
 
+from app.config import ADMIN_EMAIL, ADMIN_PASSWORD, DATABASE_URL
 from app.security import generate_hash
-
-load_dotenv()
-
-ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
 password_hash = generate_hash(ADMIN_PASSWORD)
 
 
 async def create_admin():
-    conn = await asyncpg.connect(os.getenv("DATABASE_URL"))
+    conn = await asyncpg.connect(DATABASE_URL)
 
     try:
         await conn.execute(

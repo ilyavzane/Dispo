@@ -1,22 +1,19 @@
-import os
 from datetime import datetime
 from decimal import Decimal
 from typing import Any
 
 import asyncpg
-from dotenv import load_dotenv
 
-load_dotenv()
+from app.config import DATABASE_URL
+
 pool = None
 
-
-LOAD_COLUMNS = "id, origin, destination, pickup_date, weight, status, assigned_driver_id, rate, created_by, created_at, assigned_by"
+LOAD_COLUMNS = "id, origin, destination, pickup_date, weight, status, assigned_driver_id, rate, created_by, updated_at, created_at, assigned_by"
 
 
 # POOL
 async def create_pool():
     global pool
-    DATABASE_URL = os.getenv("DATABASE_URL")
     pool = await asyncpg.create_pool(DATABASE_URL)
 
 
@@ -140,7 +137,14 @@ async def get_load_by_id(load_id: int) -> dict[str, Any] | None:
     return dict(load)
 
 
+ALLOWED_UPDATE_COLUMNS = {"origin", "destination", "pickup_date", "weight", "rate"}
+
+
 async def edit_load(load_id: int, loads_update) -> dict[str, Any] | None:
+
+    if set(loads_update) - ALLOWED_UPDATE_COLUMNS:
+        raise ValueError(status_code=400, detail="Unknown column was given")
+
     set_clause = ", ".join(
         f"{column} = ${i}" for i, column in enumerate(loads_update, start=1)
     )
@@ -148,12 +152,11 @@ async def edit_load(load_id: int, loads_update) -> dict[str, Any] | None:
     values = list(loads_update.values())
 
     edited_load = await pool.fetchrow(
-        f"""UPDATE loads SET {set_clause} WHERE id = ${len(values) + 1} 
+        f"""UPDATE loads SET {set_clause}, updated_at = now() WHERE id = ${len(values) + 1} 
         RETURNING {LOAD_COLUMNS}""",
         *values,
         load_id,
     )
-
     if edited_load is None:
         return None
 
@@ -165,7 +168,7 @@ async def assign_driver(
 ) -> dict[str, Any] | None:
     updated_load = await pool.fetchrow(
         f"""UPDATE loads
-      SET assigned_driver_id = $1, assigned_by = $2, status = 'assigned' WHERE id = $3 AND status != 'delivered'
+      SET assigned_driver_id = $1, assigned_by = $2, status = 'assigned', updated_at = now() WHERE id = $3 AND status != 'delivered'
       RETURNING {LOAD_COLUMNS}""",
         driver_id,
         assigned_by,
@@ -180,7 +183,7 @@ async def assign_driver(
 
 async def update_load_status(load_id: int, new_status: str) -> dict[str, Any] | None:
     updated_load = await pool.fetchrow(
-        f"""UPDATE loads SET status = $1 WHERE id = $2 AND status != 'delivered'
+        f"""UPDATE loads SET status = $1, updated_at = now() WHERE id = $2 AND status != 'delivered'
           RETURNING {LOAD_COLUMNS}""",
         new_status,
         load_id,

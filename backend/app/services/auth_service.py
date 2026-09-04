@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 
 from asyncpg import UniqueViolationError
@@ -7,9 +8,11 @@ from app import repository
 from app.enums import Statuses
 from app.security import check_password, create_jwt_token, generate_hash
 
+logger = logging.getLogger(__name__)
+
 
 async def register(name: str, password: str, email: str, role: str) -> dict[str, Any]:
-    hashed_password = generate_hash(password)
+    hashed_password = generate_hash(password=password)
 
     try:
         response = await repository.add_new_user(
@@ -20,12 +23,13 @@ async def register(name: str, password: str, email: str, role: str) -> dict[str,
             status_code=409, detail="Email already registered"
         ) from None
 
+    logger.info("User %s applied for registration", name)
     return response
 
 
 async def login(email: str, password: str) -> dict[str, Any]:
 
-    user_data = await repository.get_user_by_email(email)
+    user_data = await repository.get_user_by_email(email=email)
 
     if user_data is None:
         raise HTTPException(status_code=401, detail="Invalid email or password")
@@ -41,6 +45,7 @@ async def login(email: str, password: str) -> dict[str, Any]:
     if user_data["status"] == Statuses.REJECTED:
         raise HTTPException(status_code=403, detail="Account is rejected")
 
-    token = create_jwt_token(user_data["id"])
+    token = create_jwt_token(user_id=user_data["id"])
 
+    logger.info("User %s has logged in", email)
     return {"access_token": token, "token_type": "bearer", "user": user_data}

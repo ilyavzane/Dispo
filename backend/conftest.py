@@ -1,17 +1,20 @@
 import asyncio
 import os
+import logging
 
 import asyncpg
 import pytest
 from dotenv import load_dotenv
 from fastapi.testclient import TestClient
 
-from app.main import app
-from app.security import generate_hash
-
 load_dotenv()
 os.environ["DATABASE_URL"] = os.getenv("TEST_DATABASE_URL")
 
+if "test" not in os.environ["DATABASE_URL"]:
+    raise RuntimeError("It's not test database")
+
+from app.main import app
+from app.security import generate_hash
 
 APPROVED_EMAIL = "approved@test.com"
 SECOND_DRIVER_EMAIL = "seconddriver@test.com"
@@ -20,6 +23,8 @@ ADMIN_EMAIL = "admin@test.com"
 DISPATCHER_EMAIL = "dispatcher@test.com"
 
 TEST_PASSWORD = "12345678"
+
+logging.getLogger().handlers.clear()
 
 
 async def _truncate_users():

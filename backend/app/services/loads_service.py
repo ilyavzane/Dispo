@@ -1,3 +1,4 @@
+import logging
 from decimal import Decimal
 from typing import Any
 
@@ -6,6 +7,8 @@ from fastapi import HTTPException
 from app import repository
 from app.enums import LoadStatus, Roles, Statuses
 
+logger = logging.getLogger(__name__)
+
 
 async def create_load(
     origin: str,
@@ -13,13 +16,21 @@ async def create_load(
     pickup_date,
     weight: Decimal,
     rate: Decimal,
-    created_by: int,
+    created_by: dict,
 ):
 
     new_load = await repository.create_load(
-        origin, destination, pickup_date, weight, rate, created_by
+        origin=origin,
+        destination=destination,
+        pickup_date=pickup_date,
+        weight=weight,
+        rate=rate,
+        created_by=created_by["id"],
     )
 
+    logger.info(
+        "New load: From %s To: %s | Created by %s", origin, destination, created_by
+    )
     return new_load
 
 
@@ -30,33 +41,54 @@ async def get_loads(user: dict, status: str | None = None):
     else:
         driver_id = None
 
-    loads = await repository.get_loads(status, driver_id)
+    loads = await repository.get_loads(status=status, driver_id=driver_id)
 
     return loads
+
+
+async def get_load_by_id(load_id: int, user):
+    load = await repository.get_load_by_id(load_id=load_id)
+
+    if load is None:
+        raise HTTPException(status_code=404, detail="Load not found")
+
+    if user["role"] == Roles.DRIVER and load["assigned_driver_id"] != user["id"]:
+        raise HTTPException(
+            status_code=403,
+            detail="Driver is not allowed to check loads not assigned to him",
+        )
+
+    return load
 
 
 ALLOWED_UPDATE_COLUMNS = {"origin", "destination", "pickup_date", "weight", "rate"}
 
 
-async def edit_load(load_id: int, loads_update: dict) -> dict[str, Any]:
+async def edit_load(user, load_id: int, loads_update: dict) -> dict[str, Any]:
 
     if not loads_update:
         raise HTTPException(status_code=400, detail="No updates were sent")
 
     if set(loads_update) - ALLOWED_UPDATE_COLUMNS:
-        raise ValueError("Unknown column")
+        raise HTTPException(status_code=400, detail="Unknown column was given")
 
-    edited_load = await repository.edit_load(load_id, loads_update)
+    edited_load = await repository.edit_load(load_id=load_id, loads_update=loads_update)
 
     if edited_load is None:
         raise HTTPException(status_code=404, detail="Load not found")
 
+    logger.info(
+        "Edited load: id: %s | Updates : %s | Edited by: %s",
+        load_id,
+        loads_update,
+        user["id"],
+    )
     return edited_load
 
 
-async def assign_driver(driver_id: int, assigned_by: int, load_id: int):
+async def assign_driver(driver_id: int, assigned_by: dict, load_id: int):
 
-    driver = await repository.get_user_by_id(driver_id)
+    driver = await repository.get_user_by_id(user_id=driver_id)
 
     if driver is None:
         raise HTTPException(status_code=404, detail="Driver not found")
@@ -65,10 +97,22 @@ async def assign_driver(driver_id: int, assigned_by: int, load_id: int):
     elif driver["status"] != Statuses.APPROVED:
         raise HTTPException(status_code=400, detail="Driver is not approved")
 
-    updated_load = await repository.assign_driver(driver_id, assigned_by, load_id)
+    updated_load = await repository.assign_driver(
+        driver_id=driver_id, load_id=load_id, assigned_by=assigned_by["id"]
+    )
 
     if updated_load is None:
+        load = await repository.get_load_by_id(load_id=load_id)
+
+        if load is None:
+            raise HTTPException(status_code=404, detail="Load not found")
+
+        if load["status"] == LoadStatus.DELIVERED:
+            raise HTTPException(status_code=409, detail="Load is already delivered")
+
         raise HTTPException(status_code=404, detail="Load not found")
+
+    logger.info("Driver %s assigned to the load: %s", driver_id, load_id)
 
     return updated_load
 
@@ -80,7 +124,7 @@ async def update_load_status(user: dict, load_id: int, new_status: str):
         LoadStatus.IN_TRANSIT: LoadStatus.DELIVERED,
     }
 
-    load = await repository.get_load_by_id(load_id)
+    load = await repository.get_load_by_id(load_id=load_id)
 
     if load is None:
         raise HTTPException(status_code=404, detail="Load not found")
@@ -93,6 +137,10 @@ async def update_load_status(user: dict, load_id: int, new_status: str):
 
     updated_load = await repository.update_load_status(
         load_id=load_id, new_status=new_status
+    )
+
+    logger.info(
+        "Load %s has been updated to %s | Driver: %s", load_id, new_status, user["id"]
     )
 
     return updated_load

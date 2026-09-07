@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dispo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles/reset.css">
+    <link rel="stylesheet" href="styles/style.css">
+
+    <script src="js/login.js" type="module"></script>
+</head>
+
+<body>
+    <main class="auth-page">
+        <section class="hero">
+            <svg class="sil" viewBox="0 0 400 120" fill="none" aria-hidden="true">
+                <path d="M-10 102
+             C 48 100, 74 88, 116 80
+             C 168 70, 176 34, 232 20
+             C 268 11, 300 14, 330 28
+             C 356 40, 380 46, 410 48" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                <circle cx="30" cy="100" r="6" fill="currentColor" />
+                <circle cx="268" cy="15" r="6" fill="currentColor" />
+                <circle cx="368" cy="44" r="6" fill="currentColor" />
+            </svg>
+            <div class="logo">DISPO <span class="logo-accent">LEITSTAND</span></div>
+            <h1>Jede Ladung<br>hat einen<br><span class="h1-accent">Zustand.</span></h1>
+            <p class="hero-lead">Disponent legt an und weist zu. Fahrer meldet vom Handy. Der Status ändert sich
+                an einer Stelle
+                — und alle sehen ihn sofort.</p>
+
+            <ul class="hero-list">
+                <li class="hero-list-stat">
+                    <span class="stat-value">0</span>
+                    <span class="stat-text">Ladungen im Monat</span>
+                </li>
+                <li class="hero-list-stat">
+                    <span class="stat-value">0</span>
+                    <span class="stat-text">Ladungen aktiv</span>
+                </li>
+                <li class="hero-list-stat">
+                    <span class="stat-value">0</span>
+                    <span class="stat-text">Anrufe nötig</span>
+                </li>
+            </ul>
+        </section>
+
+        <section class="login-section">
+            <div class="form-section">
+                <h2>Anmelden</h2>
+                <p class="form-section-text-konto">Firmenkonto der Spedition Wolter</p>
+                <form action="">
+                    <label for="email">E-Mail</label>
+                    <input id="email" name="email" type="email" required>
+                    <label for="password">Passwort</label>
+                    <input id="password" name="password" type="password" minlength="8" required>
+                    <button class="submit-button" type="submit">Anmelden</button>
+                </form>
+
+                <p class="form-section-text-registration-suggestion">Noch kein Zugang? <a
+                        class="registration-suggestion-link" href="#">Konto
+                        beantragen</a><br>Der Administrator gibt es frei — meist am
+                    selben Tag.</p>
+
+                <div class="login-error-block" hidden></div>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

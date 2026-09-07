@@ -3,7 +3,7 @@ from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer
 
 from app.enums import Roles, Statuses
-from app.repository import get_user_by_id
+from app.repositories.users import get_user_by_id
 from app.security import decode_jwt_token
 
 bearer_scheme = HTTPBearer(auto_error=False)

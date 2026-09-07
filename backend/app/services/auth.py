@@ -4,7 +4,7 @@ from typing import Any
 from asyncpg import UniqueViolationError
 from fastapi import HTTPException
 
-from app import repository
+import app.repositories.auth as auth_repo
 from app.enums import Statuses
 from app.security import check_password, create_jwt_token, generate_hash
 
@@ -15,7 +15,7 @@ async def register(name: str, password: str, email: str, role: str) -> dict[str,
     hashed_password = generate_hash(password=password)
 
     try:
-        response = await repository.add_new_user(
+        response = await auth_repo.add_new_user(
             name=name, password_hash=hashed_password, email=email, role=role
         )
     except UniqueViolationError:
@@ -29,7 +29,7 @@ async def register(name: str, password: str, email: str, role: str) -> dict[str,
 
 async def login(email: str, password: str) -> dict[str, Any]:
 
-    user_data = await repository.get_user_by_email(email=email)
+    user_data = await auth_repo.get_user_by_email(email=email)
 
     if user_data is None:
         raise HTTPException(status_code=401, detail="Invalid email or password")

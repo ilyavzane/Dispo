@@ -2,10 +2,10 @@ from typing import Literal
 
 from fastapi import APIRouter, Depends
 
+import app.services.users as users_service
 from app.dependencies import require_role
 from app.enums import Roles, Statuses
 from app.schemas.users_schemas import UserOut, UserStatusUpdate
-from app.services import users_service
 
 users_router = APIRouter(tags=["Users"])
 

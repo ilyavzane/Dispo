@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Body, Depends
 
+import app.services.loads as loads_service
 from app.dependencies import require_role
 from app.enums import LoadStatus, Roles
 from app.schemas.loads_schemas import LoadCreate, LoadOut, LoadUpdate, UpdateStatus
-from app.services import loads_service
 
 loads_router = APIRouter(tags=["Loads"])
 

@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="styles/reset.css">
     <link rel="stylesheet" href="styles/style.css">
 
-    <script src="js/login.js" type="module"></script>
+    <script type="module" src="js/register.js"></script>
 </head>
 
 <body>
@@ -29,10 +29,9 @@
                 <circle cx="368" cy="44" r="6" fill="currentColor" />
             </svg>
             <div class="logo">DISPO <span class="logo-accent">LEITSTAND</span></div>
-            <h1>Jede Ladung<br>hat einen<br><span class="h1-accent">Zustand.</span></h1>
-            <p class="hero-lead">Disponent legt an und weist zu. Fahrer meldet vom Handy. Der Status ändert sich
-                an einer Stelle
-                — und alle sehen ihn sofort.</p>
+            <h1>Ein Konto,<br>eine Rolle,<br><span class="h1-accent">klare Rechte.</span></h1>
+            <p class="hero-lead">Der Disponent sieht alle Ladungen und weist Fahrer zu. Der Fahrer sieht nur seine
+                eigenen Touren und meldet den Status.</p>
 
             <ul class="hero-list">
                 <li class="hero-list-stat">
@@ -52,23 +51,43 @@
 
         <section class="login-section">
             <div class="form-section">
-                <h2>Anmelden</h2>
-                <p class="form-section-text-konto">Firmenkonto der Spedition Wolter</p>
+                <h2>Konto beantragen</h2>
+                <p class="form-section-text-konto">Zugang erhalten Sie nach Freigabe durch die Verwaltung</p>
                 <form action="">
+                    <label for="name">Name</label>
+                    <input id="name" type="text" name="name" minlength="3" required>
+
                     <label for="email">E-Mail</label>
                     <input id="email" name="email" type="email" autocomplete="email" required>
+
                     <label for="password">Passwort</label>
-                    <input id="password" name="password" type="password" autocomplete="current-password" minlength="8"
+                    <input id="password" name="password" type="password" autocomplete="new-password" minlength="8"
                         required>
-                    <button class="submit-button" type="submit">Anmelden</button>
+                    <span class="password-text">Mindestens 8 Zeichen</span>
+
+                    <span class="role-group-label">Rolle</span>
+                    <div class="role-form">
+                        <label class="role-label">
+                            <input class="role-input" type="radio" name="role" value="dispatcher" checked>
+                            <span class="role-name">Disponent</span>
+                            <span class="role-description">Legt Ladungen an und weist sie zu</span>
+                        </label>
+
+                        <label class="role-label">
+                            <input class="role-input" type="radio" name="role" value="driver">
+                            <span class="role-name">Fahrer</span>
+                            <span class="role-description">Fährt Touren und meldet den Status</span>
+                        </label>
+                    </div>
+
+                    <div class="login-error-block" role="alert" hidden></div>
+
+                    <button class="submit-button" type="submit">Antrag senden</button>
                 </form>
 
-                <div class="login-error-block" role="alert" hidden></div>
 
-                <p class="form-section-text-registration-suggestion">Noch kein Zugang? <a
-                        class="registration-suggestion-link" href="register.html">Konto
-                        beantragen</a><br>Der Administrator gibt es frei — meist am
-                    selben Tag.</p>
+                <p class="form-section-text-registration-suggestion">Schon registriert? <a
+                        class="registration-suggestion-link" href="index.html">Anmelden</a></p>
 
             </div>
         </section>

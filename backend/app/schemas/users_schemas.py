@@ -1,6 +1,7 @@
 from typing import Literal
 
 from pydantic import BaseModel, EmailStr, Field
+from datetime import datetime
 
 from app.enums import Roles, Statuses
 
@@ -18,6 +19,7 @@ class UserOut(BaseModel):
     email: str
     role: Roles
     status: Literal[Statuses.PENDING, Statuses.APPROVED, Statuses.REJECTED]
+    created_at: datetime
 
 
 class UserLogin(BaseModel):

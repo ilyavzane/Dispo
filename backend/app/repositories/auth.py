@@ -19,7 +19,7 @@ async def add_new_user(
 
 async def get_user_by_email(email: str) -> dict[str, Any] | None:
     response = await db.pool.fetchrow(
-        "SELECT id, status, name, email, password_hash, role FROM users WHERE email = $1",
+        "SELECT id, status, name, email, password_hash, role, created_at FROM users WHERE email = $1",
         email,
     )
 

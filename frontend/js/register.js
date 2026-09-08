@@ -6,36 +6,50 @@ const submitButton = document.querySelector(".submit-button")
 
 form.addEventListener("submit", async (e) => {
     e.preventDefault()
-    submitButton.disabled = true
+    submitButton.disabled = true;
 
     const payload = Object.fromEntries(new FormData(form))
     let response;
-
+    let data;
     try {
-        response = await fetch(`${API}/auth/login`,
+        response = await fetch(`${API}/auth/register`,
             {
                 method: "post",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             }
         )
+
+        data = await response.json()
+
     } catch (error) {
         errorText.hidden = false
         errorText.textContent = "Server nicht erreichbar. Bitte später erneut versuchen."
+        return
+    } finally {
         submitButton.disabled = false
+    }
+
+
+
+    if (response.status === 422) {
+        errorText.textContent = "Bitte prüfen Sie Ihre Eingaben"
+        errorText.hidden = false
         return
     }
 
-    const data = await response.json()
+    if (response.status === 409) {
+        errorText.textContent = "Diese E-mail ist bereits vergeben"
+        errorText.hidden = false
+        return
+    }
 
     if (!response.ok) {
-        errorText.textContent = data.detail
+        errorText.textContent = "Etwas ist schief gelaufen. Bitte später erneut versuchen"
         errorText.hidden = false
-        submitButton.disabled = false
         return
     }
-
     errorText.hidden = true
-    localStorage.setItem("token", data.access_token)
+    sessionStorage.setItem("pendingUser", JSON.stringify(data))
 
 })

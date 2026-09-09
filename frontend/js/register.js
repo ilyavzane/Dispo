@@ -1,8 +1,18 @@
-import { API } from "./app.js";
+import { sendRequest } from "./app.js";
 
 const form = document.querySelector("form")
-const errorText = document.querySelector(".login-error-block")
+const errorBlock = document.querySelector(".login-error-block")
 const submitButton = document.querySelector(".submit-button")
+
+function getErrorText(errorStatus) {
+    switch (errorStatus) {
+        case 422:
+            return "Bitte prüfen Sie Ihre Eingaben"
+        case 409:
+            return "Diese E-Mail ist bereits vergeben"
+
+    }
+}
 
 form.addEventListener("submit", async (e) => {
     e.preventDefault()
@@ -10,46 +20,24 @@ form.addEventListener("submit", async (e) => {
 
     const payload = Object.fromEntries(new FormData(form))
     let response;
-    let data;
     try {
-        response = await fetch(`${API}/auth/register`,
-            {
-                method: "post",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            }
-        )
-
-        data = await response.json()
-
+        response = await sendRequest("register", payload)
     } catch (error) {
-        errorText.hidden = false
-        errorText.textContent = "Server nicht erreichbar. Bitte später erneut versuchen."
+        errorBlock.hidden = false
+        errorBlock.textContent = "Server nicht erreichbar. Bitte später erneut versuchen."
         return
     } finally {
         submitButton.disabled = false
     }
 
 
-
-    if (response.status === 422) {
-        errorText.textContent = "Bitte prüfen Sie Ihre Eingaben"
-        errorText.hidden = false
-        return
-    }
-
-    if (response.status === 409) {
-        errorText.textContent = "Diese E-mail ist bereits vergeben"
-        errorText.hidden = false
-        return
-    }
-
     if (!response.ok) {
-        errorText.textContent = "Etwas ist schief gelaufen. Bitte später erneut versuchen"
-        errorText.hidden = false
+        errorBlock.textContent = getErrorText(response.status) ?? "Etwas ist schief gelaufen. Bitte später erneut versuchen"
+        errorBlock.hidden = false
         return
     }
-    errorText.hidden = true
+
+    errorBlock.hidden = true
+    sessionStorage.setItem("pendingUser", JSON.stringify(response.data))
     location.replace("pending.html")
-    sessionStorage.setItem("pendingUser", JSON.stringify(data))
 })

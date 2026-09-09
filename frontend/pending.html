@@ -12,14 +12,15 @@
     <link rel="stylesheet" href="styles/reset.css">
     <link rel="stylesheet" href="styles/style.css">
 
-    <script src="js/login.js" type="module"></script>
+    <script src="js/pending.js" type="module"></script>
 </head>
 
 <body>
     <main class="auth-page">
         <section class="hero">
             <svg class="sil" viewBox="0 0 400 120" fill="none" aria-hidden="true">
-                <path class="route" d="M-10 101.38 C 48 102.53, 74 91.00, 116 81.96 C 168 68.90, 176 32.45, 232 17.03 C 268 9.14, 300 14.00, 330 29.76 C 356 42.77, 380 48.98, 410 50.23"
+                <path class="route"
+                    d="M-10 101.38 C 48 102.53, 74 91.00, 116 81.96 C 168 68.90, 176 32.45, 232 17.03 C 268 9.14, 300 14.00, 330 29.76 C 356 42.77, 380 48.98, 410 50.23"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round">
                     <animate attributeName="d" dur="12s" repeatCount="indefinite"
                         values="M-10 101.38 C 48 102.53, 74 91.00, 116 81.96 C 168 68.90, 176 32.45, 232 17.03 C 268 9.14, 300 14.00, 330 29.76 C 356 42.77, 380 48.98, 410 50.23;
@@ -33,56 +34,65 @@
                             M-10 101.38 C 48 102.53, 74 91.00, 116 81.96 C 168 68.90, 176 32.45, 232 17.03 C 268 9.14, 300 14.00, 330 29.76 C 356 42.77, 380 48.98, 410 50.23" />
                 </path>
                 <circle class="dot dot-1" cx="30" cy="101.76" r="6" fill="currentColor">
-                    <animate attributeName="cy" dur="12s" repeatCount="indefinite" values="101.76;99.53;97.57;97.04;98.24;100.47;102.43;102.96;101.76" />
+                    <animate attributeName="cy" dur="12s" repeatCount="indefinite"
+                        values="101.76;99.53;97.57;97.04;98.24;100.47;102.43;102.96;101.76" />
                 </circle>
                 <circle class="dot dot-2" cx="268" cy="13.14" r="6" fill="currentColor">
-                    <animate attributeName="cy" dur="12s" repeatCount="indefinite" values="13.14;12.02;12.65;14.66;16.86;17.98;17.35;15.34;13.14" />
+                    <animate attributeName="cy" dur="12s" repeatCount="indefinite"
+                        values="13.14;12.02;12.65;14.66;16.86;17.98;17.35;15.34;13.14" />
                 </circle>
                 <circle class="dot dot-3" cx="368" cy="46.97" r="6" fill="currentColor">
-                    <animate attributeName="cy" dur="12s" repeatCount="indefinite" values="46.97;45.79;43.56;41.59;41.03;42.21;44.44;46.41;46.97" />
+                    <animate attributeName="cy" dur="12s" repeatCount="indefinite"
+                        values="46.97;45.79;43.56;41.59;41.03;42.21;44.44;46.41;46.97" />
                 </circle>
             </svg>
             <div class="logo">DISPO <span class="logo-accent">LEITSTAND</span></div>
-            <h1>Jede Ladung<br>hat einen<br><span class="h1-accent">Zustand.</span></h1>
-            <p class="hero-lead">Disponent legt an und weist zu. Fahrer meldet vom Handy. Der Status ändert sich
-                an einer Stelle
-                — und alle sehen ihn sofort.</p>
+            <h1>Fast <span class="h1-accent">fertig.</span><br>Noch ein<br>Schritt.</h1>
+            <p class="hero-lead">Ihr Konto liegt bei der Verwaltung. Bis zur Freigabe können Sie sich noch nicht
+                anmelden — Sie bekommen eine E-Mail, sobald es so weit ist.</p>
 
             <ul class="hero-list">
                 <li class="hero-list-stat">
-                    <span class="stat-value mono">0</span>
-                    <span class="stat-text">Ladungen im Monat</span>
+                    <span class="stat-value mono">14</span>
+                    <span class="stat-text">Anträge in der Prüfung</span>
                 </li>
                 <li class="hero-list-stat">
-                    <span class="stat-value mono">0</span>
-                    <span class="stat-text">Ladungen aktiv</span>
-                </li>
-                <li class="hero-list-stat">
-                    <span class="stat-value mono">0</span>
-                    <span class="stat-text">Anrufe nötig</span>
+                    <span class="stat-value mono">~4 h</span>
+                    <span class="stat-text">übliche Wartezeit</span>
                 </li>
             </ul>
         </section>
 
         <section class="login-section">
             <div class="form-section">
-                <h2>Anmelden</h2>
-                <p class="form-section-text-konto">Firmenkonto der Spedition Wolter</p>
-                <form action="">
-                    <label for="email">E-Mail</label>
-                    <input id="email" name="email" type="email" autocomplete="email" required>
-                    <label for="password">Passwort</label>
-                    <input id="password" name="password" type="password" autocomplete="current-password" minlength="8"
-                        required>
-                    <button class="submit-button" type="submit">Anmelden</button>
-                </form>
+                <div class="badge">&#9201;&#xFE0E;</div>
+                <h2 class="header-awaiting">Antrag in Prüfung</h2>
+                <p class="pending-lead">Ihr Konto wurde angelegt, ist aber noch nicht freigeschaltet.
+                    Sobald die Verwaltung den Antrag geprüft hat, erhalten Sie eine E-Mail an die angegebene
+                    Adresse.
+                </p>
 
-                <div class="login-error-block" role="alert" hidden></div>
+                <dl>
+                    <div class="spaces-row">
+                        <dt>Eingereicht</dt>
+                        <dd id="created_at" class="mono"></dd>
+                    </div>
+                    <div class="spaces-row">
+                        <dt>Rolle</dt>
+                        <dd id="role"></dd>
+                    </div>
+                    <div class="spaces-row">
+                        <dt>E-Mail</dt>
+                        <dd id="email" class="mono"></dd>
+                    </div>
+                    <div class="spaces-row">
+                        <dt>Status</dt>
+                        <dd id="status" class="status-pending"></dd>
+                    </div>
 
-                <p class="form-section-text-registration-suggestion">Noch kein Zugang? <a
-                        class="registration-suggestion-link" href="register.html">Konto
-                        beantragen</a><br>Der Administrator gibt es frei — meist am
-                    selben Tag.</p>
+                </dl>
+
+                <button class="abmelden-button" type="button">Abmelden</button>
 
             </div>
         </section>

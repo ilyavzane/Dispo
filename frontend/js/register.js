@@ -50,6 +50,6 @@ form.addEventListener("submit", async (e) => {
         return
     }
     errorText.hidden = true
+    location.replace("pending.html")
     sessionStorage.setItem("pendingUser", JSON.stringify(data))
-
 })

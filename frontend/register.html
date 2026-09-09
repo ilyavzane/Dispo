@@ -7,7 +7,7 @@
     <title>Dispo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100..900;1,100..900&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:wght@400;500&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="styles/reset.css">
     <link rel="stylesheet" href="styles/style.css">
@@ -19,14 +19,32 @@
     <main class="auth-page">
         <section class="hero">
             <svg class="sil" viewBox="0 0 400 120" fill="none" aria-hidden="true">
-                <path d="M-10 102
-             C 48 100, 74 88, 116 80
-             C 168 70, 176 34, 232 20
-             C 268 11, 300 14, 330 28
-             C 356 40, 380 46, 410 48" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                <circle cx="30" cy="100" r="6" fill="currentColor" />
-                <circle cx="268" cy="15" r="6" fill="currentColor" />
-                <circle cx="368" cy="44" r="6" fill="currentColor" />
+                <path class="route"
+                    d="M-10 101.38 C 48 102.53, 74 91.00, 116 81.96 C 168 68.90, 176 32.45, 232 17.03 C 268 9.14, 300 14.00, 330 29.76 C 356 42.77, 380 48.98, 410 50.23"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <animate attributeName="d" dur="12s" repeatCount="indefinite"
+                        values="M-10 101.38 C 48 102.53, 74 91.00, 116 81.96 C 168 68.90, 176 32.45, 232 17.03 C 268 9.14, 300 14.00, 330 29.76 C 356 42.77, 380 48.98, 410 50.23;
+                            M-10 99.48 C 48 100.65, 74 90.08, 116 82.99 C 168 71.19, 176 34.72, 232 17.59 C 268 8.02, 300 11.88, 330 27.53 C 356 41.13, 380 48.33, 410 51.00;
+                            M-10 99.07 C 48 98.39, 74 87.94, 116 82.27 C 168 72.79, 176 36.57, 232 19.56 C 268 8.65, 300 11.00, 330 25.57 C 356 38.84, 380 46.31, 410 50.01;
+                            M-10 100.37 C 48 97.07, 74 85.83, 116 80.22 C 168 72.75, 176 36.91, 232 21.79 C 268 10.66, 300 11.88, 330 25.04 C 356 37.22, 380 44.11, 410 47.84;
+                            M-10 102.62 C 48 97.47, 74 85.00, 116 78.04 C 168 71.10, 176 35.55, 232 22.97 C 268 12.86, 300 14.00, 330 26.24 C 356 37.23, 380 43.02, 410 45.77;
+                            M-10 104.52 C 48 99.35, 74 85.92, 116 77.01 C 168 68.81, 176 33.28, 232 22.41 C 268 13.98, 300 16.12, 330 28.47 C 356 38.87, 380 43.67, 410 45.00;
+                            M-10 104.93 C 48 101.61, 74 88.06, 116 77.73 C 168 67.21, 176 31.43, 232 20.44 C 268 13.35, 300 17.00, 330 30.43 C 356 41.16, 380 45.69, 410 45.99;
+                            M-10 103.63 C 48 102.93, 74 90.17, 116 79.78 C 168 67.25, 176 31.09, 232 18.21 C 268 11.34, 300 16.12, 330 30.96 C 356 42.78, 380 47.89, 410 48.16;
+                            M-10 101.38 C 48 102.53, 74 91.00, 116 81.96 C 168 68.90, 176 32.45, 232 17.03 C 268 9.14, 300 14.00, 330 29.76 C 356 42.77, 380 48.98, 410 50.23" />
+                </path>
+                <circle class="dot dot-1" cx="30" cy="101.76" r="6" fill="currentColor">
+                    <animate attributeName="cy" dur="12s" repeatCount="indefinite"
+                        values="101.76;99.53;97.57;97.04;98.24;100.47;102.43;102.96;101.76" />
+                </circle>
+                <circle class="dot dot-2" cx="268" cy="13.14" r="6" fill="currentColor">
+                    <animate attributeName="cy" dur="12s" repeatCount="indefinite"
+                        values="13.14;12.02;12.65;14.66;16.86;17.98;17.35;15.34;13.14" />
+                </circle>
+                <circle class="dot dot-3" cx="368" cy="46.97" r="6" fill="currentColor">
+                    <animate attributeName="cy" dur="12s" repeatCount="indefinite"
+                        values="46.97;45.79;43.56;41.59;41.03;42.21;44.44;46.41;46.97" />
+                </circle>
             </svg>
             <div class="logo">DISPO <span class="logo-accent">LEITSTAND</span></div>
             <h1>Ein Konto,<br>eine Rolle,<br><span class="h1-accent">klare Rechte.</span></h1>
@@ -35,16 +53,17 @@
 
             <ul class="hero-list">
                 <li class="hero-list-stat">
-                    <span class="stat-value">0</span>
-                    <span class="stat-text">Ladungen im Monat</span>
+                    <span class="stat-value mono">2</span>
+                    <span class="stat-text">Rollen</span>
                 </li>
                 <li class="hero-list-stat">
-                    <span class="stat-value">0</span>
-                    <span class="stat-text">Ladungen aktiv</span>
+                    <span class="stat-value mono">
+                        < 1 Tag</span>
+                            <span class="stat-text">bis zur Freigabe</span>
                 </li>
                 <li class="hero-list-stat">
-                    <span class="stat-value">0</span>
-                    <span class="stat-text">Anrufe nötig</span>
+                    <span class="stat-value mono">0 €</span>
+                    <span class="stat-text">für Mitarbeiter</span>
                 </li>
             </ul>
         </section>

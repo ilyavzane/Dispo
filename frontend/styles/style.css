@@ -48,6 +48,11 @@ input, button {
     font: inherit;
 }
 
+.mono{
+    font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+}
+
 .auth-page{
     display: grid;
     grid-template-columns: 1fr 430px;
@@ -55,15 +60,15 @@ input, button {
 }
 
 .logo{
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
     line-height: 1.03em;
-    letter-spacing: 0.23em;
+    letter-spacing: 0.26em;
 }
 
 .logo-accent{
     color: var(--amber);
-    font-size: 11px;
+    font-size: 10.5px;
     letter-spacing: 0.14em;
 }
 
@@ -95,12 +100,54 @@ input, button {
     margin-bottom: 28px;
 }
 
+
+.badge {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--amber);
+    color: var(--amber);
+    font-size: 19px;
+    line-height: 1;
+    margin-bottom: 20px;
+}
+
+.header-awaiting{
+    font-size: 21px;
+    letter-spacing: -0.015em;
+    margin-bottom: 8px;
+}
+
+.pending-lead{
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    max-width: 42ch;
+    margin-bottom: 22px;
+}
+
+.spaces-row{
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    font-size: 13px;
+    border-top: 1px solid var(--line);
+}
+
+.status-pending{
+    color: var(--amber);
+}
+
+.spaces-row dt{
+    color: var(--ink-3);
+}
+
 .form-section label:not(.role-label),
 .role-group-label{
-    font-size: 11px;
-    font-weight: 400;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 500;
     color: var(--ink-2);
     margin-bottom: 6px;
 }
@@ -188,13 +235,32 @@ input:focus {
     color: var(--ink-3);
 }
 
+.abmelden-button{
+    display: block;
+    width: 100%;
+    height: 32px;
+    margin-top: 16px;
+    padding: 0 14px;
+    background: none;
+    color: var(--ink-2);
+    border: 1px solid var(--line-2);
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.abmelden-button:hover{
+    color: var(--ink);
+    border-color: var(--ink-3);
+}
+
 .submit-button{
     height:  40px;
     margin-top: 8px;
     background-color: var(--accent-solid);
     color: var(--accent-ink);
     border: 0;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
 }
@@ -240,9 +306,9 @@ input:focus {
 
 .hero h1{
     margin-top: 74px;
-    font-size: 54px;
+    font-size: 52px;
     font-weight: 600;
-    line-height: 1.02;
+    line-height: 1.03;
     letter-spacing: -0.03em;
 }
 
@@ -277,7 +343,7 @@ input:focus {
 }
 
 .stat-text{
-    font-size: 14px;
+    font-size: 12px;
     color: var(--ink-3);
     margin-top: 4px;
 }

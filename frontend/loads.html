@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ladungen · Dispo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles/reset.css">
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/app.css">
+
+    <script type="module" src="js/loads.js"></script>
+</head>
+
+<body>
+    <div class="work">
+
+        <nav class="rail">
+            <div class="rail-who">
+                <div class="rail-avatar mono" id="rail-avatar">—</div>
+                <div>
+                    <b id="rail-name">—</b>
+                    <span id="rail-role">Disponent</span>
+                </div>
+            </div>
+
+            <p class="rail-group">Disposition</p>
+            <a class="on" href="loads.html">Ladungen <span class="count mono" id="rail-count-loads"></span></a>
+            <a href="assign.html">Ohne Fahrer <span class="count mono" id="rail-count-unassigned"></span></a>
+            <a href="new-load.html">Neue Ladung</a>
+
+            <div class="rail-sep"></div>
+
+            <p class="rail-group">Verwaltung</p>
+            <a href="applications.html">Anträge</a>
+
+            <button class="rail-out" type="button" id="logout">Abmelden</button>
+        </nav>
+
+        <main class="center">
+            <div class="head">
+                <h1>Ladungen</h1>
+                <span class="stamp mono" id="head-count">—</span>
+                <div class="head-actions">
+                    <a class="btn primary" href="new-load.html">Neue Ladung</a>
+                </div>
+            </div>
+
+            <div class="kpis">
+                <div class="kpi blue">
+                    <span class="kpi-value mono" id="kpi-active">—</span>
+                    <span class="kpi-label">aktiv</span>
+                </div>
+                <div class="kpi amber">
+                    <span class="kpi-value mono amber" id="kpi-unassigned">—</span>
+                    <span class="kpi-label">ohne Fahrer</span>
+                </div>
+                <div class="kpi violet">
+                    <span class="kpi-value mono" id="kpi-weight">—</span>
+                    <span class="kpi-label">unterwegs</span>
+                </div>
+                <div class="kpi green">
+                    <span class="kpi-value mono green" id="kpi-open">—</span>
+                    <span class="kpi-label">offen</span>
+                </div>
+            </div>
+
+            <div class="filters" id="filters">
+                <button type="button" class="on" data-status="">Alle</button>
+                <button type="button" data-status="new">Neu</button>
+                <button type="button" data-status="assigned">Zugewiesen</button>
+                <button type="button" data-status="in_transit">Unterwegs</button>
+                <button type="button" data-status="delivered">Zugestellt</button>
+            </div>
+
+            <div class="page-error" id="page-error" role="alert" hidden></div>
+
+            <div class="rows">
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Strecke</th>
+                            <th>Ladedatum</th>
+                            <th>Fahrer</th>
+                            <th>Status</th>
+                            <th class="right">Gewicht</th>
+                            <th class="right">Preis</th>
+                        </tr>
+                    </thead>
+
+                    <!-- Строки ниже — образец разметки. Заменяются данными из GET /loads. -->
+                    <tbody id="loads-tbody">
+                        <tr data-load-id="1042">
+                            <td class="stripe new"></td>
+                            <td class="route">Hamburg <span class="route-arrow">→</span> München
+                                <span class="load-id mono">#1042</span>
+                            </td>
+                            <td class="muted mono">12.09.2026 · 08:30</td>
+                            <td class="muted">—</td>
+                            <td><span class="status new">Neu</span></td>
+                            <td class="right mono">18,50 t</td>
+                            <td class="right mono">1 240,00 €</td>
+                        </tr>
+                        <tr data-load-id="1039">
+                            <td class="stripe in_transit"></td>
+                            <td class="route">Bremen <span class="route-arrow">→</span> Stuttgart
+                                <span class="load-id mono">#1039</span>
+                            </td>
+                            <td class="muted mono">11.09.2026 · 07:00</td>
+                            <td class="muted">Fahrer #4</td>
+                            <td><span class="status in_transit">Unterwegs</span></td>
+                            <td class="right mono">14,20 t</td>
+                            <td class="right mono">1 105,00 €</td>
+                        </tr>
+                        <tr data-load-id="1041">
+                            <td class="stripe assigned"></td>
+                            <td class="route">Berlin <span class="route-arrow">→</span> Köln
+                                <span class="load-id mono">#1041</span>
+                            </td>
+                            <td class="muted mono">12.09.2026 · 11:45</td>
+                            <td class="muted">Fahrer #7</td>
+                            <td><span class="status assigned">Zugewiesen</span></td>
+                            <td class="right mono">9,80 t</td>
+                            <td class="right mono">795,00 €</td>
+                        </tr>
+                        <tr data-load-id="1035">
+                            <td class="stripe delivered"></td>
+                            <td class="route">Dortmund <span class="route-arrow">→</span> Nürnberg
+                                <span class="load-id mono">#1035</span>
+                            </td>
+                            <td class="muted mono">02.09.2026 · 13:00</td>
+                            <td class="muted">Fahrer #4</td>
+                            <td><span class="status delivered">Zugestellt</span></td>
+                            <td class="right mono">5,60 t</td>
+                            <td class="right mono">410,00 €</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <aside class="aside" id="detail">
+            <!-- Показывается, пока строка не выбрана -->
+            <p class="aside-empty" id="detail-empty">Ladung links auswählen, um Details zu sehen.</p>
+
+            <!-- Заполняется из выбранной строки -->
+            <div id="detail-body" hidden>
+                <div class="aside-top">
+                    <span class="aside-num mono" id="detail-id">#1039</span>
+                    <span class="status in_transit" id="detail-status">Unterwegs</span>
+                </div>
+
+                <div class="leg">
+                    <div class="leg-point">
+                        <div class="leg-bullet"></div>
+                        <div>
+                            <div class="leg-city" id="detail-origin">Bremen</div>
+                            <div class="leg-when mono" id="detail-pickup">11.09.2026 · 07:00</div>
+                        </div>
+                    </div>
+                    <div class="leg-link"></div>
+                    <div class="leg-point target">
+                        <div class="leg-bullet"></div>
+                        <div>
+                            <div class="leg-city" id="detail-destination">Stuttgart</div>
+                            <div class="leg-when">Lieferort</div>
+                        </div>
+                    </div>
+                </div>
+
+                <dl>
+                    <div class="kv">
+                        <dt>Fahrer</dt>
+                        <dd id="detail-driver">—</dd>
+                    </div>
+                    <div class="kv">
+                        <dt>Gewicht</dt>
+                        <dd class="mono" id="detail-weight">14,20 t</dd>
+                    </div>
+                    <div class="kv">
+                        <dt>Preis</dt>
+                        <dd class="mono" id="detail-rate">1 105,00 €</dd>
+                    </div>
+                    <div class="kv">
+                        <dt>Angelegt</dt>
+                        <dd class="mono" id="detail-created">04.09.2026 · 09:02</dd>
+                    </div>
+                </dl>
+
+                <div class="aside-buttons">
+                    <button class="btn primary" type="button" id="detail-deliver">Zustellen</button>
+                    <button class="btn" type="button" id="detail-edit">Bearbeiten</button>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+</body>
+
+</html>

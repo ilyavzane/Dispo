@@ -41,7 +41,8 @@ async def get_drivers(available: bool | None = None) -> list[dict]:
 
 async def get_user_by_id(user_id: int) -> dict[str, Any] | None:
     user_data = await db.pool.fetchrow(
-        "SELECT id, name, email, role, status FROM users WHERE id = $1", user_id
+        "SELECT id, name, email, role, status, created_at FROM users WHERE id = $1",
+        user_id,
     )
 
     if user_data is None:

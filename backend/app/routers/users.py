@@ -10,6 +10,11 @@ from app.schemas.users_schemas import UserOut, UserStatusUpdate
 users_router = APIRouter(tags=["Users"])
 
 
+@users_router.get("/me", response_model=UserOut)
+async def get_myself(user=Depends(require_role(Roles.DISPATCHER, Roles.DRIVER))):
+    return user
+
+
 @users_router.get(
     "/users",
     response_model=list[UserOut],

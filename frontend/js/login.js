@@ -1,4 +1,4 @@
-import { sendRequest } from "./app.js";
+import { sendAuthRequest } from "./app.js";
 
 const form = document.querySelector("form")
 const errorBlock = document.querySelector(".login-error-block")
@@ -23,7 +23,7 @@ form.addEventListener("submit", async (e) => {
     let response;
 
     try {
-        response = await sendRequest("login", payload)
+        response = await sendAuthRequest("login", payload)
     } catch (error) {
         errorBlock.hidden = false
         errorBlock.textContent = "Server nicht erreichbar. Bitte später erneut versuchen."
@@ -40,5 +40,6 @@ form.addEventListener("submit", async (e) => {
 
     errorBlock.hidden = true
     localStorage.setItem("token", response.data.access_token)
+    location.href = "loads.html"
 
 })

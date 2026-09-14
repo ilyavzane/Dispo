@@ -47,6 +47,12 @@ const detailEmpty = document.querySelector("#detail-empty")
 const detailBody = document.querySelector("#detail-body")
 
 const logout = document.querySelector("#logout")
+const railAvatar = document.querySelector("#rail-avatar")
+const railCountLoads = document.querySelector("#rail-count-loads")
+
+const filters = document.querySelector("#filters")
+// "" = кнопка "Alle", иначе значение data-status
+let activeStatus = ""
 
 const STATUS_LABELS = {
     new: "Neu",
@@ -180,7 +186,7 @@ function renderLoads(loads) {
     }
 
     const html = loads.map(load => `<tr data-load-id="${load.id}">
-                        <td class="stripe ${STATUS_LABELS[load.status]}"></td>
+                        <td class="stripe ${load.status}"></td>
                         <td class="route">${load.origin} <span class="route-arrow">→</span> ${load.destination}
                         <span class="load-id mono">#${load.id}</span>
                         </td>
@@ -221,11 +227,37 @@ function renderKpi(loads) {
     const sum = active.reduce((total, load) => total + Number(load.rate), 0)
 
     allLoadsInHistory.textContent = allCount
+    railCountLoads.textContent = allCount
     activeLoads.textContent = activeCount
     newLoads.textContent = newCount
     loadsInTransit.textContent = transitCount
     loadsPreis.textContent = `${sum.toFixed(2)} €`
 }
+
+function renderVisibleLoads() {
+    const visible = activeStatus
+        ? currentLoads.filter(load => load.status === activeStatus)
+        : currentLoads
+
+    renderLoads(visible)
+}
+
+// один обработчик на контейнер вместо пяти на кнопки (делегирование)
+filters.addEventListener("click", (event) => {
+    const button = event.target.closest("button")
+
+    if (!button) {
+        return
+    }
+
+    activeStatus = button.dataset.status
+
+    for (const item of filters.querySelectorAll("button")) {
+        item.classList.toggle("on", item === button)
+    }
+
+    renderVisibleLoads()
+})
 
 tbody.addEventListener("click", (event) => {
     const tr = event.target.closest("tr")
@@ -330,7 +362,7 @@ loadForm.addEventListener("submit", async (event) => {
         currentLoads[index] = response.data
         selectedLoad = response.data
         renderLoadDetails(selectedLoad)
-        renderLoads(currentLoads)
+        renderVisibleLoads()
         renderKpi(currentLoads)
         showPageOk("Ladung gespeichert")
     }
@@ -352,6 +384,7 @@ async function init() {
 
     username.textContent = userData.name
     userRole.textContent = userData.role
+    railAvatar.textContent = userData.name.slice(0, 2).toUpperCase()
 
     currentLoads = await getLoads()
 
@@ -359,7 +392,7 @@ async function init() {
         return
     }
 
-    renderLoads(currentLoads)
+    renderVisibleLoads()
     renderKpi(currentLoads)
 }
 

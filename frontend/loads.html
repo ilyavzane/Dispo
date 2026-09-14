@@ -30,13 +30,6 @@
 
             <p class="rail-group">Disposition</p>
             <a class="on" href="loads.html">Ladungen <span class="count mono" id="rail-count-loads"></span></a>
-            <a href="assign.html">Ohne Fahrer <span class="count mono" id="rail-count-unassigned"></span></a>
-            <a href="new-load.html">Neue Ladung</a>
-
-            <div class="rail-sep"></div>
-
-            <p class="rail-group">Verwaltung</p>
-            <a href="applications.html">Anträge</a>
 
             <button class="rail-out" type="button" id="logout">Abmelden</button>
         </nav>
@@ -45,9 +38,6 @@
             <div class="head">
                 <h1>Ladungen</h1>
                 <span class="stamp mono" id="head-count">—</span>
-                <div class="head-actions">
-                    <a class="btn primary" href="new-load.html">Neue Ladung</a>
-                </div>
             </div>
 
             <div class="kpis">
@@ -95,53 +85,7 @@
                         </tr>
                     </thead>
 
-                    <!-- Строки ниже — образец разметки. Заменяются данными из GET /loads. -->
-                    <tbody id="loads-tbody">
-                        <tr data-load-id="1042">
-                            <td class="stripe new"></td>
-                            <td class="route">Hamburg <span class="route-arrow">→</span> München
-                                <span class="load-id mono">#1042</span>
-                            </td>
-                            <td class="muted mono">12.09.2026 · 08:30</td>
-                            <td class="muted">—</td>
-                            <td><span class="status new">Neu</span></td>
-                            <td class="right mono">18,50 t</td>
-                            <td class="right mono">1 240,00 €</td>
-                        </tr>
-                        <tr data-load-id="1039">
-                            <td class="stripe in_transit"></td>
-                            <td class="route">Bremen <span class="route-arrow">→</span> Stuttgart
-                                <span class="load-id mono">#1039</span>
-                            </td>
-                            <td class="muted mono">11.09.2026 · 07:00</td>
-                            <td class="muted">Fahrer #4</td>
-                            <td><span class="status in_transit">Unterwegs</span></td>
-                            <td class="right mono">14,20 t</td>
-                            <td class="right mono">1 105,00 €</td>
-                        </tr>
-                        <tr data-load-id="1041">
-                            <td class="stripe assigned"></td>
-                            <td class="route">Berlin <span class="route-arrow">→</span> Köln
-                                <span class="load-id mono">#1041</span>
-                            </td>
-                            <td class="muted mono">12.09.2026 · 11:45</td>
-                            <td class="muted">Fahrer #7</td>
-                            <td><span class="status assigned">Zugewiesen</span></td>
-                            <td class="right mono">9,80 t</td>
-                            <td class="right mono">795,00 €</td>
-                        </tr>
-                        <tr data-load-id="1035">
-                            <td class="stripe delivered"></td>
-                            <td class="route">Dortmund <span class="route-arrow">→</span> Nürnberg
-                                <span class="load-id mono">#1035</span>
-                            </td>
-                            <td class="muted mono">02.09.2026 · 13:00</td>
-                            <td class="muted">Fahrer #4</td>
-                            <td><span class="status delivered">Zugestellt</span></td>
-                            <td class="right mono">5,60 t</td>
-                            <td class="right mono">410,00 €</td>
-                        </tr>
-                    </tbody>
+                    <tbody id="loads-tbody"></tbody>
                 </table>
             </div>
         </main>
@@ -195,15 +139,13 @@
                 </dl>
 
                 <div class="aside-buttons">
-                    <button class="btn primary" type="button" id="detail-deliver">Zustellen</button>
                     <button class="btn" type="button" id="detail-edit">Bearbeiten</button>
                 </div>
             </div>
         </aside>
 
-        <!-- Диалог обслуживает оба сценария: Bearbeiten (PATCH /loads/{id}) и Neue Ladung (POST /loads).
-             name у полей совпадает с ключами LoadCreate/LoadUpdate, поэтому
-             Object.fromEntries(new FormData(form)) даёт готовый payload. -->
+        <!-- Bearbeiten: PATCH /loads/{id}. Отправляются только изменённые поля,
+             имена полей совпадают с ключами схемы LoadUpdate. -->
         <dialog class="modal" id="load-dialog">
             <form class="modal-form" id="load-form">
 

@@ -635,3 +635,181 @@ dl {
         max-width: none;
     }
 }
+
+/* ══ Диалог: Ladung bearbeiten / Neue Ladung ══════════ */
+
+/* лежит внутри .work, поэтому наследует --accent / --accent-on */
+.modal {
+    width: min(440px, calc(100vw - 32px));
+    padding: 0;
+    border: 1px solid var(--line-2);
+    border-radius: 10px;
+    background-color: var(--bg);
+    color: var(--ink);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
+
+    /* чтобы нативный календарь и стрелки у number были в теме страницы */
+    color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+    .modal {
+        color-scheme: dark;
+    }
+}
+
+.modal::backdrop {
+    background-color: rgba(8, 10, 12, 0.45);
+}
+
+.modal-form {
+    padding: 20px 22px 18px;
+}
+
+.modal-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+}
+
+.modal-head h2 {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.modal-num {
+    flex: none;
+    font-size: 12.5px;
+    color: var(--ink-3);
+}
+
+/* ── ошибка от сервера ───────────────────────────────── */
+
+.modal-error {
+    padding: 9px 12px;
+    margin-bottom: 14px;
+    border: 1px solid var(--red);
+    border-radius: 6px;
+    color: var(--red);
+    font-size: 13px;
+    line-height: 1.4;
+    /* ошибок может прийти несколько, они склеены через \n */
+    white-space: pre-line;
+}
+
+/* ── поля ────────────────────────────────────────────── */
+
+.field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 13px;
+}
+
+.field label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-2);
+    margin-bottom: 6px;
+}
+
+.field input {
+    height: 36px;
+    padding: 0 11px;
+    border: 1px solid var(--line-2);
+    border-radius: 6px;
+    background-color: var(--panel);
+    color: var(--ink);
+    font-size: 14px;
+}
+
+/* специфичнее глобального input:focus из style.css, где рамка янтарная */
+.modal .field input:focus {
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+/* :user-invalid, а не :invalid — подсветка только после попытки ввода,
+   иначе пустая обязательная форма краснеет сразу при открытии */
+.modal .field input:user-invalid {
+    border-color: var(--red);
+}
+
+.field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+/* ── кнопки ──────────────────────────────────────────── */
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+@media (max-width: 560px) {
+    .field-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+}
+
+
+/* ── сообщение об успехе ─────────────────────────────── */
+
+.page-ok {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 100;
+    max-width: 340px;
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    padding: 12px 15px;
+    border-radius: 8px;
+    background-color: var(--green);
+    color: #fff;
+    font-size: 13.5px;
+    font-weight: 400;
+    line-height: 1.45;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28);
+}
+
+/* без этого display:flex перебивает атрибут hidden */
+.page-ok[hidden] {
+    display: none;
+}
+
+.page-ok::before {
+    content: "\2713";
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    font-size: 11.5px;
+    font-weight: 600;
+}
+
+@media (max-width: 560px) {
+
+    .page-ok {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+}

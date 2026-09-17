@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neue Ladung · Dispo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles/reset.css">
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/app.css">
+
+    <script type="module" src="js/new-load.js"></script>
+</head>
+
+<body>
+    <div class="work">
+
+        <nav class="rail">
+            <div class="rail-who">
+                <div class="rail-avatar mono" id="rail-avatar">—</div>
+                <div>
+                    <b id="rail-name">—</b>
+                    <span id="rail-role">Disponent</span>
+                </div>
+            </div>
+
+            <p class="rail-group">Disposition</p>
+            <a href="loads.html">Ladungen <span class="count mono" id="rail-count-loads"></span></a>
+            <a href="assign.html">Ohne Fahrer <span class="count mono" id="rail-count-unassigned"></span></a>
+            <a class="on" href="new-load.html">Neue Ladung</a>
+
+            <div class="rail-sep"></div>
+
+            <p class="rail-group">Verwaltung</p>
+            <a href="applications.html">Anträge</a>
+
+            <button class="rail-out" type="button" id="logout">Abmelden</button>
+        </nav>
+
+        <main class="center">
+            <div class="head">
+                <h1>Neue Ladung</h1>
+            </div>
+
+            <div class="page-error" id="page-error" role="alert" hidden></div>
+
+            <div class="page-ok" id="page-ok" role="status" hidden></div>
+
+            <!-- POST /loads. Имена полей совпадают с ключами схемы LoadCreate. -->
+            <form class="form-card" id="new-load-form" novalidate>
+
+                <p class="modal-error" id="form-error" hidden></p>
+
+                <p class="form-section">Strecke</p>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label for="f-origin">Von</label>
+                        <input id="f-origin" name="origin" type="text" placeholder="Hamburg" required autocomplete="off">
+                    </div>
+                    <div class="field">
+                        <label for="f-destination">Nach</label>
+                        <input id="f-destination" name="destination" type="text" placeholder="München" required autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="f-pickup">Abholung</label>
+                    <input id="f-pickup" name="pickup_date" type="datetime-local" required>
+                </div>
+
+                <p class="form-section">Fracht</p>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label for="f-weight">Gewicht (t)</label>
+                        <input id="f-weight" name="weight" class="mono" type="number" step="0.01" min="0.01" placeholder="18.50" required>
+                    </div>
+                    <div class="field">
+                        <label for="f-rate">Preis (&euro;)</label>
+                        <input id="f-rate" name="rate" class="mono" type="number" step="0.01" min="0.01" placeholder="1240.00" required>
+                    </div>
+                </div>
+
+                <div class="modal-buttons">
+                    <button class="btn" type="reset" id="form-reset">Leeren</button>
+                    <button class="btn primary" type="submit" id="form-submit">Ladung anlegen</button>
+                </div>
+
+            </form>
+        </main>
+
+        <!-- Живой предпросмотр: обновляется при вводе в форму -->
+        <aside class="aside">
+            <div class="aside-top">
+                <span class="aside-num mono">Vorschau</span>
+                <span class="status new">Neu</span>
+            </div>
+
+            <div class="leg">
+                <div class="leg-point">
+                    <div class="leg-bullet"></div>
+                    <div>
+                        <div class="leg-city" id="preview-origin">—</div>
+                        <div class="leg-when mono" id="preview-pickup">—</div>
+                    </div>
+                </div>
+                <div class="leg-link"></div>
+                <div class="leg-point target">
+                    <div class="leg-bullet"></div>
+                    <div>
+                        <div class="leg-city" id="preview-destination">—</div>
+                        <div class="leg-when">Lieferort</div>
+                    </div>
+                </div>
+            </div>
+
+            <dl>
+                <div class="kv">
+                    <dt>Gewicht</dt>
+                    <dd class="mono" id="preview-weight">—</dd>
+                </div>
+                <div class="kv">
+                    <dt>Preis</dt>
+                    <dd class="mono" id="preview-rate">—</dd>
+                </div>
+                <div class="kv">
+                    <dt>Preis pro Tonne</dt>
+                    <dd class="mono" id="preview-per-ton">—</dd>
+                </div>
+            </dl>
+
+            <p class="aside-empty preview-note">Nach dem Anlegen erscheint die Ladung unter „Ohne Fahrer“.</p>
+        </aside>
+
+    </div>
+</body>
+
+</html>

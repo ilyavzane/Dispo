@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ohne Fahrer · Dispo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles/reset.css">
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/app.css">
+
+    <script type="module" src="js/assign.js"></script>
+</head>
+
+<body>
+    <div class="work">
+
+        <nav class="rail">
+            <div class="rail-who">
+                <div class="rail-avatar mono" id="rail-avatar">—</div>
+                <div>
+                    <b id="rail-name">—</b>
+                    <span id="rail-role">Disponent</span>
+                </div>
+            </div>
+
+            <p class="rail-group">Disposition</p>
+            <a href="loads.html">Ladungen <span class="count mono" id="rail-count-loads"></span></a>
+            <a class="on" href="assign.html">Ohne Fahrer <span class="count mono" id="rail-count-unassigned"></span></a>
+            <a href="new-load.html">Neue Ladung</a>
+
+            <div class="rail-sep"></div>
+
+            <p class="rail-group">Verwaltung</p>
+            <a href="applications.html">Anträge</a>
+
+            <button class="rail-out" type="button" id="logout">Abmelden</button>
+        </nav>
+
+        <main class="center">
+            <div class="head">
+                <h1>Ohne Fahrer</h1>
+                <span class="stamp mono" id="head-count">—</span>
+            </div>
+
+            <div class="page-error" id="page-error" role="alert" hidden></div>
+
+            <div class="page-ok" id="page-ok" role="status" hidden></div>
+
+            <!-- GET /loads?status=new -->
+            <div class="rows">
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Strecke</th>
+                            <th>Ladedatum</th>
+                            <th>Status</th>
+                            <th class="right">Gewicht</th>
+                            <th class="right">Preis</th>
+                        </tr>
+                    </thead>
+
+                    <!-- Строки ниже — образец разметки. Заменяются данными из GET /loads?status=new. -->
+                    <tbody id="loads-tbody">
+                        <tr data-load-id="1042">
+                            <td class="stripe new"></td>
+                            <td class="route">Hamburg <span class="route-arrow">→</span> München
+                                <span class="load-id mono">#1042</span>
+                            </td>
+                            <td class="muted mono">12.09.2026 · 08:30</td>
+                            <td><span class="status new">Neu</span></td>
+                            <td class="right mono">18,50 t</td>
+                            <td class="right mono">1 240,00 €</td>
+                        </tr>
+                        <tr data-load-id="1040">
+                            <td class="stripe new"></td>
+                            <td class="route">Dresden <span class="route-arrow">→</span> Bremen
+                                <span class="load-id mono">#1040</span>
+                            </td>
+                            <td class="muted mono">12.09.2026 · 06:00</td>
+                            <td><span class="status new">Neu</span></td>
+                            <td class="right mono">7,25 t</td>
+                            <td class="right mono">640,00 €</td>
+                        </tr>
+
+                        <!-- Если грузов без водителя нет:
+                        <tr class="rows-empty">
+                            <td colspan="6">Alle Ladungen haben einen Fahrer.</td>
+                        </tr>
+                        -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <aside class="aside" id="detail">
+            <!-- Показывается, пока груз не выбран -->
+            <p class="aside-empty" id="detail-empty">Ladung links auswählen, um einen Fahrer zuzuweisen.</p>
+
+            <!-- Заполняется из выбранной строки -->
+            <div id="detail-body" hidden>
+                <div class="aside-top">
+                    <span class="aside-num mono" id="detail-id">#1042</span>
+                    <span class="status new">Neu</span>
+                </div>
+
+                <div class="leg">
+                    <div class="leg-point">
+                        <div class="leg-bullet"></div>
+                        <div>
+                            <div class="leg-city" id="detail-origin">Hamburg</div>
+                            <div class="leg-when mono" id="detail-pickup">12.09.2026 · 08:30</div>
+                        </div>
+                    </div>
+                    <div class="leg-link"></div>
+                    <div class="leg-point target">
+                        <div class="leg-bullet"></div>
+                        <div>
+                            <div class="leg-city" id="detail-destination">München</div>
+                            <div class="leg-when">Lieferort</div>
+                        </div>
+                    </div>
+                </div>
+
+                <dl>
+                    <div class="kv">
+                        <dt>Gewicht</dt>
+                        <dd class="mono" id="detail-weight">18,50 t</dd>
+                    </div>
+                    <div class="kv">
+                        <dt>Preis</dt>
+                        <dd class="mono" id="detail-rate">1 240,00 €</dd>
+                    </div>
+                </dl>
+
+                <div class="aside-title">
+                    <h2>Fahrer auswählen</h2>
+
+                    <!-- GET /drivers?available=true  или  GET /drivers -->
+                    <div class="chips" id="driver-filters">
+                        <button type="button" class="on" data-available="true">Frei</button>
+                        <button type="button" data-available="">Alle</button>
+                    </div>
+                </div>
+
+                <!-- Кнопки ниже — образец разметки. Заменяются данными из GET /drivers. -->
+                <div class="drivers" id="drivers-list">
+                    <button type="button" class="driver selected" data-driver-id="7">
+                        <span class="driver-avatar mono">TW</span>
+                        <span class="driver-text">
+                            <span class="driver-name">Tobias Weber</span>
+                            <span class="driver-mail mono">t.weber@wolter-spedition.de</span>
+                        </span>
+                        <span class="driver-free yes">frei</span>
+                    </button>
+
+                    <button type="button" class="driver" data-driver-id="4">
+                        <span class="driver-avatar mono">MP</span>
+                        <span class="driver-text">
+                            <span class="driver-name">Mykola Petrenko</span>
+                            <span class="driver-mail mono">m.petrenko@wolter-spedition.de</span>
+                        </span>
+                        <span class="driver-free no">belegt</span>
+                    </button>
+
+                    <!-- Если свободных водителей нет:
+                    <p class="drivers-empty">Gerade ist kein Fahrer frei.</p>
+                    -->
+                </div>
+
+                <!-- PATCH /loads/{id}/assign  с телом {"driver_id": ...} -->
+                <div class="aside-buttons">
+                    <button class="btn primary" type="button" id="assign-button" disabled>Zuweisen</button>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+</body>
+
+</html>

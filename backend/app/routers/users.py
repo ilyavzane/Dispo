@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends
 import app.services.users as users_service
 from app.dependencies import require_role
 from app.enums import Roles, Statuses
-from app.schemas.users_schemas import UserOut, UserStatusUpdate
+from app.schemas.users_schemas import UserOut, UserStatusUpdate, DriversOut
 
 users_router = APIRouter(tags=["Users"])
 
@@ -44,7 +44,7 @@ async def update_user_status(user_id: int, status_update: UserStatusUpdate):
 
 @users_router.get(
     "/drivers",
-    response_model=list[UserOut],
+    response_model=list[DriversOut],
     status_code=200,
     dependencies=[Depends(require_role(Roles.DISPATCHER))],
 )

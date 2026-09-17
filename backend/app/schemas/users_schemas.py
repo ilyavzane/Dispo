@@ -22,6 +22,10 @@ class UserOut(BaseModel):
     created_at: datetime
 
 
+class DriversOut(UserOut):
+    is_available: bool
+
+
 class UserLogin(BaseModel):
     email: EmailStr = Field(max_length=254)
     password: str

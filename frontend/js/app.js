@@ -46,3 +46,17 @@ export async function sendAuthRequest(path, payload) {
         status: response.status,
     }
 }
+
+export function formDate(pickUpDate) {
+    const loadPickUpDate = new Date(pickUpDate)
+
+    const datePart = loadPickUpDate.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })
+    const timePart = loadPickUpDate.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })
+
+    return `${datePart} ${timePart}`
+}
+
+// "Max Müller" → "MM"
+export function getInitials(name) {
+    return name.split(" ").map(word => word[0]).join("").toUpperCase()
+}

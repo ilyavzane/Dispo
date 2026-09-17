@@ -27,7 +27,10 @@ async def update_user_status(user_id: int, new_status: str) -> dict[str, Any] | 
 
 async def get_drivers(available: bool | None = None) -> list[dict]:
 
-    query = "SELECT id, name, email, role, status, created_at FROM users WHERE role = 'driver' AND status = 'approved'"
+    query = """SELECT id, name, email, role, status, created_at,
+      NOT EXISTS (SELECT 1 FROM loads WHERE assigned_driver_id = users.id
+      AND loads.status IN ('in_transit', 'assigned')) AS is_available 
+      FROM users WHERE role = 'driver' AND status = 'approved'"""
 
     if available is True:
         query += " AND NOT EXISTS (SELECT 1 FROM loads WHERE assigned_driver_id = users.id AND loads.status IN ('in_transit', 'assigned'))"

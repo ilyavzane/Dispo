@@ -99,18 +99,21 @@ body:has(> .work) {
     color: var(--accent-on);
 }
 
+/* счётчик тёмный на обычном пункте... */
 .rail a .count {
     margin-left: auto;
     padding: 1px 6px;
     border-radius: 20px;
-    background-color: var(--panel-2);
-    color: var(--ink-3);
+    background-color: var(--accent);
+    color: var(--accent-on);
     font-size: 11px;
 }
 
+/* ...и серый на выделенном: 30% светлого, подмешанного в тёмный фон пункта */
 .rail a.on .count {
-    background-color: rgba(255, 255, 255, 0.18);
+    background-color: color-mix(in srgb, var(--accent-on) 30%, var(--accent));
     color: var(--accent-on);
+    font-weight: 500;
 }
 
 .rail-sep {
@@ -307,13 +310,15 @@ body:has(> .work) {
     border-radius: 0 8px 8px 0;
 }
 
-.rows tbody tr:hover td {
+.rows tbody tr:hover td:not(.stripe) {
     background-color: var(--panel-2);
 }
 
-.rows tbody tr.selected td {
-    background-color: var(--panel-2);
-    border-color: var(--line-2);
+/* выбранная строка — вся строка в голубом оттенке, цветной торец не трогаем */
+.rows tbody tr.selected td:not(.stripe),
+.rows tbody tr.selected:hover td:not(.stripe) {
+    background-color: color-mix(in srgb, var(--blue) 12%, var(--panel));
+    border-color: color-mix(in srgb, var(--blue) 35%, var(--line));
 }
 
 /* отступ между шапкой и первой карточкой */
@@ -812,4 +817,139 @@ dl {
         left: 10px;
         max-width: none;
     }
+}
+
+
+/* ══ Ohne Fahrer (assign.html) ════════════════════════ */
+
+.subhead {
+    padding: 0 22px 14px;
+    font-size: 13px;
+    color: var(--ink-2);
+}
+
+/* ── заголовок блока в правой панели ─────────────────── */
+
+.aside-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 18px 0 10px;
+}
+
+.aside-title h2 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-2);
+}
+
+/* маленькие переключатели, как .filters, но без отступов страницы */
+.chips {
+    display: flex;
+    gap: 4px;
+}
+
+.chips button {
+    padding: 3px 10px;
+    border: 0;
+    border-radius: 20px;
+    background-color: var(--panel-2);
+    color: var(--ink-2);
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.chips button:hover {
+    color: var(--ink);
+}
+
+.chips button.on {
+    background-color: var(--accent);
+    color: var(--accent-on);
+}
+
+/* ── список водителей ────────────────────────────────── */
+
+.drivers {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.driver {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border: 1px solid var(--line-2);
+    border-radius: 8px;
+    background-color: var(--bg);
+    color: var(--ink);
+    text-align: left;
+    cursor: pointer;
+}
+
+.driver:hover {
+    border-color: var(--ink-3);
+}
+
+.driver.selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+}
+
+.driver-avatar {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: var(--panel-2);
+    color: var(--ink-2);
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.driver.selected .driver-avatar {
+    background-color: var(--accent);
+    color: var(--accent-on);
+}
+
+/* min-width: 0 — иначе длинная почта не обрезается и распирает кнопку */
+.driver-text {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.driver-name {
+    font-size: 13.5px;
+    font-weight: 500;
+}
+
+.driver-mail {
+    overflow: hidden;
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.driver-free {
+    flex: none;
+    margin-left: auto;
+    font-size: 11.5px;
+}
+
+.driver-free.yes { color: var(--green); }
+.driver-free.no { color: var(--ink-3); }
+
+.drivers-empty {
+    padding: 14px 0;
+    color: var(--ink-3);
+    font-size: 13px;
 }

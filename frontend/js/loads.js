@@ -1,4 +1,4 @@
-import { sendRequest, API, getToken } from "./app.js";
+import { sendRequest, API, getToken, formDate } from "./app.js";
 
 
 const username = document.querySelector("#rail-name")
@@ -170,15 +170,6 @@ async function getLoads() {
     return response.data
 }
 
-function formDate(pickUpDate) {
-    const loadPickUpDate = new Date(pickUpDate)
-
-    const datePart = loadPickUpDate.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })
-    const timePart = loadPickUpDate.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })
-
-    return `${datePart} ${timePart}`
-}
-
 function renderLoads(loads) {
     if (loads.length === 0) {
         tbody.innerHTML = `<tr class="rows-empty"><td colspan="7">Keine Ladungen</td></tr>`
@@ -250,6 +241,10 @@ filters.addEventListener("click", (event) => {
         return
     }
 
+    selectedLoad = null
+    detailBody.hidden = true
+    detailEmpty.hidden = false
+
     activeStatus = button.dataset.status
 
     for (const item of filters.querySelectorAll("button")) {
@@ -264,9 +259,17 @@ tbody.addEventListener("click", (event) => {
     if (!tr) {
         return
     }
+
     const load = currentLoads.find(l => l.id === Number(tr.dataset.loadId))
+    if (!load) {
+        return
+    }
+
+    for (const row of tbody.querySelectorAll("tr")) {
+        row.classList.toggle("selected", tr === row)
+    }
+
     selectedLoad = load
-    console.log(load)
 
     renderLoadDetails(load)
 })

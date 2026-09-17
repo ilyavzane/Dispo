@@ -1,8 +1,6 @@
-import { sendRequest, API, getToken, formDate, errorMessage } from "./app.js";
+import { sendRequest, API, getToken, formDate, errorMessage, renderRail, homePageFor } from "./app.js";
 
 
-const username = document.querySelector("#rail-name")
-const userRole = document.querySelector("#rail-role")
 
 const errorPage = document.querySelector("#page-error")
 
@@ -47,7 +45,6 @@ const detailEmpty = document.querySelector("#detail-empty")
 const detailBody = document.querySelector("#detail-body")
 
 const logout = document.querySelector("#logout")
-const railAvatar = document.querySelector("#rail-avatar")
 const railCountLoads = document.querySelector("#rail-count-loads")
 
 const filters = document.querySelector("#filters")
@@ -342,9 +339,13 @@ async function init() {
         return
     }
 
-    username.textContent = userData.name
-    userRole.textContent = userData.role
-    railAvatar.textContent = userData.name.slice(0, 2).toUpperCase()
+    // водитель не должен видеть экраны диспетчера
+    if (userData.role === "driver") {
+        location.replace(homePageFor(userData.role))
+        return
+    }
+
+    renderRail(userData)
 
     currentLoads = await getLoads()
 

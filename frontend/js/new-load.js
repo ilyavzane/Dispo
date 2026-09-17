@@ -1,12 +1,8 @@
-import { sendRequest, formDate, getInitials, errorMessage } from "./app.js"
+import { sendRequest, formDate, errorMessage, renderRail, homePageFor } from "./app.js"
 
 const logout = document.querySelector("#logout")
 const errorPage = document.querySelector("#page-error")
 const pageOk = document.querySelector("#page-ok")
-
-const avatar = document.querySelector("#rail-avatar")
-const username = document.querySelector("#rail-name")
-const userRole = document.querySelector("#rail-role")
 
 const loadsAmount = document.querySelector("#rail-count-loads")
 const newLoadsAmount = document.querySelector("#rail-count-unassigned")
@@ -220,9 +216,12 @@ async function init() {
         return
     }
 
-    avatar.textContent = getInitials(user.name)
-    username.textContent = user.name
-    userRole.textContent = user.role
+    if (user.role === "driver") {
+        location.replace(homePageFor(user.role))
+        return
+    }
+
+    renderRail(user)
 
     // нельзя выбрать дату в прошлом
     fPickup.min = toLocalInputValue(new Date())

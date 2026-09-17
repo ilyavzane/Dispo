@@ -3,7 +3,7 @@
 Freight dispatch app — dispatchers create loads, assign them to drivers and track them through delivery.
 German UI, two roles: **Disponent** (dispatcher) and **Fahrer** (driver).
 
-Learning project. The backend is the finished part; the frontend covers the dispatcher's main screen.
+Learning project. The backend is written by hand; most of the frontend screens were built with AI assistance.
 
 ## Tech Stack
 
@@ -94,15 +94,9 @@ New accounts start as `pending` and must be approved by an admin before they can
 **Done**
 
 - Backend: auth, roles, account approval, load CRUD, driver assignment, status transitions, tests
-- Frontend: login, registration, pending screen
-- Frontend: dispatcher's load board — table, KPIs, detail panel, status filters, edit dialog (`PATCH`)
-
-**Deliberately out of scope for this version**
-
-- Creating loads from the UI (the `POST /loads` endpoint exists and works via `/docs`)
-- Driver assignment screen
-- Driver's own screen for changing load status
-- Admin screen for approving accounts
-
-The backend supports all four; only the UI for them is missing. This was a backend-focused
-project, and the remaining work is repetitive frontend wiring that adds nothing new.
+- Frontend: login (redirects by role), registration, pending screen
+- Dispatcher: load board — table, KPIs, detail panel, status filters, edit dialog (`PATCH`)
+- Dispatcher: create load (`POST /loads`) with live preview
+- Dispatcher: driver assignment — unassigned loads, `Frei / Alle` driver filter, `PATCH /loads/{id}/assign`
+- Admin: account approval queue (`PATCH /users/{id}/status`)
+- Driver: mobile screen with own tours and status updates (`PATCH /loads/{id}/status`)

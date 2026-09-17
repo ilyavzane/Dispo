@@ -1,4 +1,4 @@
-import { sendAuthRequest } from "./app.js";
+import { sendAuthRequest, homePageFor } from "./app.js";
 
 const form = document.querySelector("form")
 const errorBlock = document.querySelector(".login-error-block")
@@ -40,6 +40,6 @@ form.addEventListener("submit", async (e) => {
 
     errorBlock.hidden = true
     localStorage.setItem("token", response.data.access_token)
-    location.href = "loads.html"
+    location.href = homePageFor(response.data.user.role)
 
 })

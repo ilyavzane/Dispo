@@ -1,13 +1,9 @@
-import { sendRequest, formDate, getInitials } from "./app.js"
+import { sendRequest, formDate, getInitials, renderRail, homePageFor } from "./app.js"
 
 const logout = document.querySelector("#logout")
 const errorPage = document.querySelector("#page-error")
 const pageOk = document.querySelector("#page-ok")
 const tbody = document.querySelector("#loads-tbody")
-
-const avatar = document.querySelector("#rail-avatar")
-const username = document.querySelector("#rail-name")
-const userRole = document.querySelector("#rail-role")
 
 const newLoadsAmount = document.querySelector("#rail-count-unassigned")
 const loadsAmount = document.querySelector("#rail-count-loads")
@@ -297,9 +293,12 @@ async function init() {
         return
     }
 
-    avatar.textContent = getInitials(user.name)
-    username.textContent = user.name
-    userRole.textContent = user.role
+    if (user.role === "driver") {
+        location.replace(homePageFor(user.role))
+        return
+    }
+
+    renderRail(user)
 
     const loads = await getLoads()
 

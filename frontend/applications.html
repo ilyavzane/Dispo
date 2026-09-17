@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anträge · Dispo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles/reset.css">
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/app.css">
+
+    <script type="module" src="js/applications.js"></script>
+</head>
+
+<body>
+    <!-- wide: без правой панели -->
+    <div class="work wide">
+
+        <nav class="rail">
+            <div class="rail-who">
+                <div class="rail-avatar mono" id="rail-avatar">—</div>
+                <div>
+                    <b id="rail-name">—</b>
+                    <span id="rail-role">Verwaltung</span>
+                </div>
+            </div>
+
+            <p class="rail-group">Disposition</p>
+            <a href="loads.html">Ladungen <span class="count mono" id="rail-count-loads"></span></a>
+            <a href="assign.html">Ohne Fahrer <span class="count mono" id="rail-count-unassigned"></span></a>
+            <a href="new-load.html">Neue Ladung</a>
+
+            <div id="rail-admin" hidden>
+                <div class="rail-sep"></div>
+
+                <p class="rail-group">Verwaltung</p>
+                <a class="on" href="applications.html">Anträge <span class="count mono" id="rail-count-pending"></span></a>
+            </div>
+
+            <button class="rail-out" type="button" id="logout">Abmelden</button>
+        </nav>
+
+        <main class="center">
+            <div class="head">
+                <h1>Anträge</h1>
+                <span class="stamp mono" id="head-count">—</span>
+            </div>
+
+            <p class="subhead">Neue Konten warten auf Freischaltung. Bis dahin kann sich der Antragsteller nicht anmelden.</p>
+
+            <div class="page-error" id="page-error" role="alert" hidden></div>
+
+            <div class="page-ok" id="page-ok" role="status" hidden></div>
+
+            <!-- GET /users?status=... -->
+            <div class="filters" id="status-filters">
+                <button type="button" class="on" data-status="pending">Offen</button>
+                <button type="button" data-status="approved">Freigeschaltet</button>
+                <button type="button" data-status="rejected">Abgelehnt</button>
+            </div>
+
+            <div class="rows">
+                <table class="queue">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>E-Mail</th>
+                            <th>Rolle</th>
+                            <th>Eingereicht</th>
+                            <th class="right">Aktion</th>
+                        </tr>
+                    </thead>
+
+                    <!-- Заполняется из GET /users. Кнопки: PATCH /users/{id}/status -->
+                    <tbody id="users-tbody">
+                        <tr class="rows-empty">
+                            <td colspan="5">Wird geladen…</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="foot-note">Ein freigeschaltetes Konto kann sich sofort anmelden. Eine Ablehnung ist nicht endgültig — das Konto lässt sich später freischalten.</p>
+        </main>
+
+    </div>
+</body>
+
+</html>

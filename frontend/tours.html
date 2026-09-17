@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meine Touren · Dispo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles/reset.css">
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/app.css">
+
+    <script type="module" src="js/tours.js"></script>
+</head>
+
+<body>
+    <!-- Экран водителя: рассчитан на телефон, на компьютере — колонка по центру -->
+    <div class="phone-page">
+        <div class="phone">
+
+            <div class="page-error" id="page-error" role="alert" hidden></div>
+
+            <div class="page-ok" id="page-ok" role="status" hidden></div>
+
+            <!-- ══ Список рейсов ══ -->
+            <section id="list-view">
+                <header class="phone-bar">
+                    <div>
+                        <h1 class="phone-title">Meine Touren</h1>
+                        <p class="phone-who" id="driver-name">—</p>
+                    </div>
+                    <div class="driver-avatar mono" id="driver-avatar">—</div>
+                </header>
+
+                <div class="phone-tabs" id="tour-tabs">
+                    <button type="button" class="on" data-tab="active">Aktuell <span class="mono" id="count-active"></span></button>
+                    <button type="button" data-tab="done">Erledigt <span class="mono" id="count-done"></span></button>
+                </div>
+
+                <!-- Заполняется из GET /loads (бэкенд отдаёт водителю только его грузы) -->
+                <div id="tours-list">
+                    <p class="tours-empty">Wird geladen…</p>
+                </div>
+
+                <div class="phone-foot">
+                    <button class="btn wide" type="button" id="logout">Abmelden</button>
+                </div>
+            </section>
+
+            <!-- ══ Один рейс ══ -->
+            <section id="detail-view" hidden>
+                <header class="phone-bar">
+                    <div>
+                        <h1 class="phone-title mono" id="tour-id">#—</h1>
+                        <p class="phone-who" id="tour-route">—</p>
+                    </div>
+                    <span class="status" id="tour-status">—</span>
+                </header>
+
+                <div class="phone-body">
+                    <p class="form-section">Status</p>
+                    <div class="steps" id="tour-steps">
+                        <div data-step="assigned">Zugewiesen</div>
+                        <div data-step="in_transit">Unterwegs</div>
+                        <div data-step="delivered">Zugestellt</div>
+                    </div>
+
+                    <div class="leg">
+                        <div class="leg-point">
+                            <div class="leg-bullet"></div>
+                            <div>
+                                <div class="leg-city" id="tour-origin">—</div>
+                                <div class="leg-when mono" id="tour-pickup">—</div>
+                            </div>
+                        </div>
+                        <div class="leg-link"></div>
+                        <div class="leg-point target">
+                            <div class="leg-bullet"></div>
+                            <div>
+                                <div class="leg-city" id="tour-destination">—</div>
+                                <div class="leg-when">Lieferort</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <dl>
+                        <div class="kv">
+                            <dt>Gewicht</dt>
+                            <dd class="mono" id="tour-weight">—</dd>
+                        </div>
+                    </dl>
+
+                    <!-- PATCH /loads/{id}/status  с телом {"new_status": ...} -->
+                    <button class="btn primary wide big" type="button" id="status-button" hidden>—</button>
+                    <p class="tour-done-note" id="tour-done-note" hidden>Diese Tour ist abgeschlossen.</p>
+
+                    <button class="btn wide" type="button" id="back-button">Zurück zu den Touren</button>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</body>
+
+</html>

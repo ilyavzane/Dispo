@@ -102,3 +102,38 @@ export function errorMessage(response) {
 
     return "Unbekannter Fehler"
 }
+
+export const ROLE_LABELS = {
+    dispatcher: "Disponent",
+    driver: "Fahrer",
+    admin: "Verwaltung"
+}
+
+// Общая левая панель рабочих экранов: имя, роль, аватар.
+// Раздел "Verwaltung" (Anträge) показываем только админу — остальным бэкенд всё равно ответит 403.
+export function renderRail(user) {
+    document.querySelector("#rail-avatar").textContent = getInitials(user.name)
+    document.querySelector("#rail-name").textContent = user.name
+    document.querySelector("#rail-role").textContent = ROLE_LABELS[user.role] ?? user.role
+
+    const adminBlock = document.querySelector("#rail-admin")
+
+    if (adminBlock) {
+        adminBlock.hidden = user.role !== "admin"
+    }
+}
+
+// Куда отправить пользователя после входа или если он открыл чужой экран
+export function homePageFor(role) {
+    return role === "driver" ? "tours.html" : "loads.html"
+}
+
+// Текст от пользователей (имена, города) вставляем в innerHTML только через эту функцию,
+// иначе "<b>" в имени станет настоящим тегом
+export function escapeHtml(text) {
+    return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+}

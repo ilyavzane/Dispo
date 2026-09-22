@@ -46,4 +46,4 @@ app.include_router(loads_router)
 @app.get("/health")
 async def health():
     response = await db.check_health()
-    return {"status": response}
+    return response

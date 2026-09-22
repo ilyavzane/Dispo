@@ -11,5 +11,9 @@ async def create_pool():
 
 
 async def check_health():
-    response = await pool.fetchval("SELECT 1")
-    return response
+    try:
+        await pool.fetchval("SELECT 1")
+
+        return {"status": "ok", "database": "ok"}
+    except (OSError, asyncpg.PostgresError):
+        return {"status": "error", "database": "down"}

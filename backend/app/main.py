@@ -1,6 +1,5 @@
 import logging
 from contextlib import asynccontextmanager
-from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,10 +11,8 @@ from app.routers.loads import loads_router
 from app.routers.users import users_router
 
 logging.basicConfig(
-    filename=Path(__file__).parent / "depo.log",
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
-    encoding="utf-8",
 )
 
 logging.getLogger("httpx").setLevel("WARNING")

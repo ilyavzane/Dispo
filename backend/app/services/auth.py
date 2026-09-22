@@ -43,7 +43,7 @@ async def login(email: str, password: str) -> dict[str, Any]:
         raise HTTPException(status_code=403, detail="Account is pending approval")
 
     if user_data["status"] == Statuses.REJECTED:
-        raise HTTPException(status_code=423, detail="Account is rejected")
+        raise HTTPException(status_code=403, detail="Account is rejected")
 
     token = create_jwt_token(user_id=user_data["id"])
 

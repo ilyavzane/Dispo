@@ -1,5 +1,7 @@
 
-export const API = "http://127.0.0.1:8000";
+export const API = location.hostname === "127.0.0.1" || location.hostname === "localhost"
+    ? "http://127.0.0.1:8000"
+    : "https://dispo-uarh.onrender.com"
 
 export function getToken() {
     return localStorage.getItem("token")

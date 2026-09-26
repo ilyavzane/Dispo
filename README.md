@@ -5,6 +5,10 @@ German UI, two roles: **Disponent** (dispatcher) and **Fahrer** (driver).
 
 Learning project. The backend is written by hand; most of the frontend screens were built with AI assistance.
 
+| Disponent | Fahrer |
+|---|---|
+| ![Dispatcher panel](materials/dispatcherPanel.gif) | ![Driver panel](materials/driverPanel.gif) |
+
 ## Tech Stack
 
 FastAPI · PostgreSQL · asyncpg · JWT · vanilla JS (no framework, no build step)

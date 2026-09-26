@@ -104,14 +104,13 @@ Tests run on the host against a separate database named `dispo_test`. With the D
 
 ```bash
 cd backend
-source venv/bin/activate
-pip install -r requirements-dev.txt
-psql -h localhost -p 5433 -U postgres -c "CREATE DATABASE dispo_test"
-psql -h localhost -p 5433 -U postgres -d dispo_test -f migrations/001_create_users.sql
-psql -h localhost -p 5433 -U postgres -d dispo_test -f migrations/002_create_loads.sql
-psql -h localhost -p 5433 -U postgres -d dispo_test -f migrations/003_create_indexes.sql
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt -r requirements-dev.txt
+docker compose up -d db_test     # test Postgres on port 5434, fresh on every start
 pytest
 ```
+
+Stop the test database: docker compose stop db_test.
 
 The database only needs to be created once. Tests refuse to run if `TEST_DATABASE_URL` does not contain `test`.
 

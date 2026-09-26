@@ -11,22 +11,63 @@ FastAPI · PostgreSQL · asyncpg · JWT · vanilla JS (no framework, no build st
 
 ## Getting Started
 
-### Backend
+### Backend — Docker Compose (recommended)
+
+Needs [Docker](https://docs.docker.com/get-docker/). Python and Postgres on the host are **not** required.
 
 ```bash
 git clone https://github.com/ilyavzane/Dispo.git
 cd Dispo/backend
+cp .env.example .env      # fill in POSTGRES_PASSWORD, JWT_SECRET, ADMIN_PASSWORD
+docker compose up --build
+```
+
+This starts two containers:
+
+| Service | What it does | Port on your machine |
+|---|---|---|
+| `db` | Postgres 17. Creates the `POSTGRES_DB` database and runs `migrations/*.sql` automatically | `5433` |
+| `app` | FastAPI backend, connects to `db` inside the Docker network | `8000` |
+
+Check it: http://localhost:8000/health
+
+Create the admin account (optional):
+
+```bash
+docker compose exec app python -m scripts.seed
+```
+
+Useful commands:
+
+```bash
+docker compose up -d --build    # run in the background
+docker compose logs -f app      # follow the backend logs
+docker compose down             # stop, data is kept in the db_data volume
+docker compose down -v          # stop and DELETE the database volume
+```
+
+⚠️ Migrations in `migrations/` run **only when the volume is empty** (first start).
+If you change them or want a fresh database, run `docker compose down -v` and start again.
+
+To open the database in pgAdmin/psql: host `localhost`, port `5433`, user and password from `.env`.
+
+### Backend — without Docker
+
+Needs Python 3.13 and a local Postgres (usually on port `5432`).
+
+```bash
+cd Dispo/backend
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env      # fill in your database password and JWT secret
-createdb dispo
-psql -U <your_db_user> -d dispo -f migrations/001_create_users.sql
-psql -U <your_db_user> -d dispo -f migrations/002_create_loads.sql
-psql -U <your_db_user> -d dispo -f migrations/003_create_indexes.sql
+cp .env.example .env      # set DATABASE_URL to your local Postgres (port 5432)
+createdb -U postgres dispo
+psql -U postgres -d dispo -f migrations/001_create_users.sql
+psql -U postgres -d dispo -f migrations/002_create_loads.sql
+psql -U postgres -d dispo -f migrations/003_create_indexes.sql
 uvicorn app.main:app --reload
 ```
 
-Optional demo data: `python scripts/seed.py`
+Optional admin account: `python -m scripts.seed`
 
 ### Frontend
 
@@ -40,14 +81,17 @@ python -m http.server 5500
 
 Then open http://127.0.0.1:5500/index.html
 
-The API base URL is set in `frontend/js/app.js` (`API`). The origin you serve the
-frontend from must be listed in `CORS_ORIGINS`.
+The API base URL is chosen in `frontend/js/app.js` (`API`) by hostname: on `localhost` /
+`127.0.0.1` it calls `http://127.0.0.1:8000`, anywhere else the deployed backend on Render.
+The origin you serve the frontend from must be listed in `CORS_ORIGINS`.
 
 ## Environment Variables
 
 | Variable | Meaning |
 |---|---|
-| `DATABASE_URL` | Postgres connection string |
+| `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` | Docker Compose: credentials and name of the database the `db` container creates |
+| `DATABASE_URL` | Postgres connection string. Used without Docker; in Compose the `app` container gets its own, built from `POSTGRES_*` |
+| `TEST_DATABASE_URL` | Separate database for `pytest`; its name must contain `test` |
 | `JWT_SECRET` | Secret for signing tokens — required, app refuses to start without it |
 | `JWT_ALGORITHM` | Signing algorithm, e.g. `HS256` |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | Token lifetime, default `60` |
@@ -56,12 +100,20 @@ frontend from must be listed in `CORS_ORIGINS`.
 
 ## Tests
 
+Tests run on the host against a separate database named `dispo_test`. With the Docker database (port `5433`):
+
 ```bash
 cd backend
+source venv/bin/activate
+pip install -r requirements-dev.txt
+psql -h localhost -p 5433 -U postgres -c "CREATE DATABASE dispo_test"
+psql -h localhost -p 5433 -U postgres -d dispo_test -f migrations/001_create_users.sql
+psql -h localhost -p 5433 -U postgres -d dispo_test -f migrations/002_create_loads.sql
+psql -h localhost -p 5433 -U postgres -d dispo_test -f migrations/003_create_indexes.sql
 pytest
 ```
 
-Tests refuse to run against the production database.
+The database only needs to be created once. Tests refuse to run if `TEST_DATABASE_URL` does not contain `test`.
 
 ## API
 
@@ -100,3 +152,5 @@ New accounts start as `pending` and must be approved by an admin before they can
 - Dispatcher: driver assignment — unassigned loads, `Frei / Alle` driver filter, `PATCH /loads/{id}/assign`
 - Admin: account approval queue (`PATCH /users/{id}/status`)
 - Driver: mobile screen with own tours and status updates (`PATCH /loads/{id}/status`)
+- Docker: `docker compose` runs backend + Postgres, migrations applied on first start
+- Deployment: backend on Render, database on Neon
